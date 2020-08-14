@@ -28,17 +28,17 @@ Now run the following in two separate terminals:
 
 Run the same script a couple times.
 
-    C:\Users\...\SoonQ>python examples\timer_task.py
+    C:\...\SoonQ>python examples\timer_task.py
     Queued task: 913d56e9-a609-4b84-b937-479a94716527
 
-    C:\Users\...\SoonQ>python examples\timer_task.py
+    C:\...\SoonQ>python examples\timer_task.py
     Queued task: da952424-98d9-42e1-8851-91a30924b94b
 
-    C:\Users\...\SoonQ>
+    C:\...\SoonQ>
 
 **Terminal 2:**
 
-    C:\Users\...\SoonQ>python examples\timer_worker.py
+    C:\...\SoonQ>python examples\timer_worker.py
     Running task: 913d56e9-a609-4b84-b937-479a94716527
     1/3 Sleeping 3 seconds...
     2/3 Sleeping 3 seconds...
@@ -61,7 +61,7 @@ Press `Ctrl + C` to quit the worker.
 
     Quitting
 
-    C:\Users\...\SoonQ>
+    C:\...\SoonQ>
 
 ## Etymology
 This project is named after my friend Soon-Kyoo, with whom I enjoyed countless bouts of epic ping-pong in college. People call him Q, for short.
