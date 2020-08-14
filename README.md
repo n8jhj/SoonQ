@@ -14,9 +14,9 @@ Users must create their own subclass of `soonq.BaseTask`. Subclasses must define
 
 ## Running the examples
 
-Example files are included in the examples directory. From within your repository, clone SoonQ...
+Example files are included in the examples directory. Clone SoonQ in your desired location...
 
-`git clone https://github.com/n8jhj/SoonQ.git`
+`C:\desired\location>git clone https://github.com/n8jhj/SoonQ.git`
 
 ...and then navigate into the `SoonQ` directory and install it in editable mode. Be careful to include the dot!
 
