@@ -63,9 +63,10 @@ class Broker:
                     args,
                     kwargs
                 FROM {QUEUE_TABLENAME}
-                WHERE queue_name = {queue_name!r}
+                WHERE queue_name = ?
                 ORDER BY position ASC
-                '''
+                ''',
+                (queue_name,),
             )
             dequeued_item = c.fetchone()
             if dequeued_item:
@@ -73,8 +74,9 @@ class Broker:
                 con.execute(
                     f'''
                     DELETE FROM {QUEUE_TABLENAME}
-                    WHERE task_id = {item_id!r}
-                    '''
+                    WHERE task_id = ?
+                    ''',
+                    (item_id,),
                 )
         con.close()
         return dequeued_item
@@ -104,8 +106,9 @@ class Broker:
             con.execute(
                 f'''
                 DELETE FROM {WORK_TABLENAME}
-                WHERE task_id = {item.task_id!r}
-                '''
+                WHERE task_id = ?
+                ''',
+                (item.task_id,),
             )
         con.close()
 
@@ -116,8 +119,9 @@ class Broker:
             con.execute(
                 f'''
                 UPDATE {WORK_TABLENAME}
-                SET status = {status!r}
-                WHERE task_id = {item.task_id!r}
-                '''
+                SET status = ?
+                WHERE task_id = ?
+                ''',
+                (status, item.task_id),
             )
         con.close()
