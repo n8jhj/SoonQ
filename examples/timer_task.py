@@ -15,7 +15,7 @@ def timer_sleep(interval, i=None, n=None):
     if None not in (i, n):
         msg = f"{i+1}/{n} "
     else:
-        msg = ''
+        msg = ""
     msg += f"Sleeping {interval} seconds..."
     sq.echo(msg)
     time.sleep(interval)
@@ -36,7 +36,7 @@ class TimerTask(sq.BaseTask):
         """
         self.interval = interval
         timer_sleep_all(interval, n)
-        sq.echo(f'Slept {interval * n} seconds total.')
+        sq.echo(f"Slept {interval * n} seconds total.")
 
 
 if __name__ == '__main__':

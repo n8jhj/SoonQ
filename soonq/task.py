@@ -55,7 +55,7 @@ class BaseTask(abc.ABC):
             self.broker.enqueue(
                 item=task, queue_name=self.task_name)
             self.set_status('enqueued')
-            echo(f'Queued task: {self.task_id}')
+            echo(f"Queued task: {self.task_id}")
         except Exception:
             raise RuntimeError(
                 f"Unable to publish task {self.task_id} to the broker.")
@@ -79,7 +79,7 @@ class BaseTask(abc.ABC):
         """
         if status not in (
                 'detached', 'enqueued', 'dequeued', 'running', 'complete'):
-            raise ValueError(f'Task status {status!r} not recognized.')
+            raise ValueError(f"Task status {status!r} not recognized.")
         self.status = status
         if status == 'running':
             self.broker.add_work(self, status)

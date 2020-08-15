@@ -39,10 +39,10 @@ class Worker:
                 task_args = json.loads(task_args)
                 task_kwargs = json.loads(task_kwargs)
                 # Run.
-                echo(f'Running task: {task_id}')
+                echo(f"Running task: {task_id}")
                 self.task.set_status('running')
                 self.task.run(*task_args, **task_kwargs)
-                echo(f'Finished task: {task_id}\n')
+                echo(f"Finished task: {task_id}\n")
                 self.task.set_status('complete')
             except KeyboardInterrupt:
                 self.quit()
@@ -50,4 +50,4 @@ class Worker:
 
     def quit(self):
         """Stop working."""
-        echo('Quitting')
+        echo("Quitting")

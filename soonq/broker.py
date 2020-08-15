@@ -19,16 +19,16 @@ class Broker:
         con = sqlite3.connect(str(DB_PATH))
         with con:
             c = con.execute(
-                f'''
+                f"""
                 SELECT position
                 FROM {QUEUE_TABLENAME}
                 ORDER BY position DESC
-                '''
+                """
             )
             max_position = c.fetchone()  # Returns a tuple.
             new_position = max_position[0] + 1 if max_position else 0
             con.execute(
-                f'''
+                f"""
                 INSERT INTO {QUEUE_TABLENAME} (
                     task_id,
                     queue_name,
@@ -38,7 +38,7 @@ class Broker:
                     kwargs
                 )
                 VALUES (?, ?, ?, ?, ?, ?)
-                ''',
+                """,
                 (
                     item['task_id'], queue_name, new_position,
                     dt.datetime.now(), item['args'], item['kwargs'],
@@ -54,7 +54,7 @@ class Broker:
         con.row_factory = sqlite3.Row
         with con:
             c = con.execute(
-                f'''
+                f"""
                 SELECT
                     task_id,
                     queue_name,
@@ -65,17 +65,17 @@ class Broker:
                 FROM {QUEUE_TABLENAME}
                 WHERE queue_name = ?
                 ORDER BY position ASC
-                ''',
+                """,
                 (queue_name,),
             )
             dequeued_item = c.fetchone()
             if dequeued_item:
                 item_id = dequeued_item['task_id']
                 con.execute(
-                    f'''
+                    f"""
                     DELETE FROM {QUEUE_TABLENAME}
                     WHERE task_id = ?
-                    ''',
+                    """,
                     (item_id,),
                 )
         con.close()
@@ -86,7 +86,7 @@ class Broker:
         con = sqlite3.connect(str(DB_PATH))
         with con:
             con.execute(
-                f'''
+                f"""
                 INSERT INTO {WORK_TABLENAME} (
                     task_id,
                     queue_name,
@@ -94,7 +94,7 @@ class Broker:
                     status
                 )
                 VALUES (?, ?, ?, ?)
-                ''',
+                """,
                 (item.task_id, item.task_name, dt.datetime.now(), status),
             )
         con.close()
@@ -104,10 +104,10 @@ class Broker:
         con = sqlite3.connect(str(DB_PATH))
         with con:
             con.execute(
-                f'''
+                f"""
                 DELETE FROM {WORK_TABLENAME}
                 WHERE task_id = ?
-                ''',
+                """,
                 (item.task_id,),
             )
         con.close()
@@ -117,11 +117,11 @@ class Broker:
         con = sqlite3.connect(str(DB_PATH))
         with con:
             con.execute(
-                f'''
+                f"""
                 UPDATE {WORK_TABLENAME}
                 SET status = ?
                 WHERE task_id = ?
-                ''',
+                """,
                 (status, item.task_id),
             )
         con.close()

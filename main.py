@@ -17,12 +17,12 @@ def init_db():
         try:
             with con:
                 con.execute(sql_str)
-            echo(f'Table {table_name!r} created')
+            echo(f"Table {table_name!r} created")
         except sqlite3.OperationalError:
-            echo(f'Table {table_name!r} already exists')
+            echo(f"Table {table_name!r} already exists")
     # Close database connection.
     con.close()
-    echo('Database initialized')
+    echo("Database initialized")
 
 
 if __name__ == '__main__':
