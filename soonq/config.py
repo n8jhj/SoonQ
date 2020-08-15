@@ -7,24 +7,26 @@ import pathlib
 
 # Database location.
 here = pathlib.Path(__file__)
-db_path = here.parent / 'instance' / 'queue.sqlite'
+DB_PATH = here.parent / 'instance' / 'queue.sqlite'
 
 # Database schema.
 # NOTE: Changing this configuration will not change the database schema.
 # In order to do so, the database must be re-initialized.
-schema = ODict(
-    queue=ODict(
+QUEUE_TABLENAME = 'queue'
+WORK_TABLENAME = 'work'
+SCHEMA = ODict(
+    (QUEUE_TABLENAME, ODict(
         task_id='TEXT PRIMARY KEY NOT NULL',
         queue_name='TEXT',
         position='INTEGER UNIQUE NOT NULL',
         published='TIMESTAMP NOT NULL',
         args='TEXT',
         kwargs='TEXT',
-    ),
-    work=ODict(
+    )),
+    (WORK_TABLENAME, ODict(
         task_id='TEXT PRIMARY KEY NOT NULL',
         queue_name='TEXT',
         started='TIMESTAMP NOT NULL',
         status='TEXT',
-    ),
+    )),
 )

@@ -3,13 +3,13 @@
 
 def init_db():
     import sqlite3
-    from soonq.config import db_path, schema
+    from soonq.config import DB_PATH, SCHEMA
     from soonq.utils import echo
 
-    db_path.parent.mkdir(exist_ok=True)
-    con = sqlite3.connect(str(db_path))
+    DB_PATH.parent.mkdir(exist_ok=True)
+    con = sqlite3.connect(str(DB_PATH))
     # Create tables.
-    for table_name, table_info in schema.items():
+    for table_name, table_info in SCHEMA.items():
         sql_str = f"CREATE TABLE {table_name} (" \
             + ', '.join([f"{col_name} {col_descr}"
                 for col_name, col_descr in table_info.items()]) \
