@@ -14,7 +14,7 @@ DB_PATH = here.parent / 'instance' / 'queue.sqlite'
 # In order to do so, the database must be re-initialized.
 QUEUE_TABLENAME = 'queue'
 WORK_TABLENAME = 'work'
-SCHEMA = ODict(
+SCHEMA = ODict([
     (QUEUE_TABLENAME, ODict(
         task_id='TEXT PRIMARY KEY NOT NULL',
         queue_name='TEXT',
@@ -29,4 +29,4 @@ SCHEMA = ODict(
         started='TIMESTAMP NOT NULL',
         status='TEXT',
     )),
-)
+])
