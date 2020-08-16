@@ -18,9 +18,9 @@ Example files are included in the examples directory. Clone SoonQ in your desire
 
 `C:\desired\location>git clone https://github.com/n8jhj/SoonQ.git`
 
-...and then navigate into the `SoonQ` directory and install it in editable mode. Be careful to include the dot!
+...and then navigate into the `SoonQ` directory and install it. Be careful to include the dot!
 
-`pip install -e .`
+`pip install .`
 
 Now run the following in two separate terminals:
 
