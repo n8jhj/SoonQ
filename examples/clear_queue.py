@@ -1,8 +1,8 @@
-"""Script for clearing the queue.
+"""For clearing the queue.
 """
 
 import soonq as sq
 
 
-if __name__ == '__main__':
+def clear_queue():
     sq.clear_queue()

@@ -1,4 +1,4 @@
-"""Script for creating timer tasks.
+"""For creating timer tasks.
 """
 
 import time
@@ -39,7 +39,7 @@ class TimerTask(sq.BaseTask):
         sq.echo(f"Slept {interval * n} seconds total.")
 
 
-if __name__ == '__main__':
+def timer_task():
     # Create a new task.
     timer_task = TimerTask()
     # Add the task to the queue, to be executed at some future time.

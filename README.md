@@ -28,17 +28,17 @@ Now run the following in two separate terminals:
 
 Run the same script a couple times.
 
-    C:\...\SoonQ>python examples\timer_task.py
+    C:\...\SoonQ>python -m examples timer_task
     Queued task: 913d56e9-a609-4b84-b937-479a94716527
 
-    C:\...\SoonQ>python examples\timer_task.py
+    C:\...\SoonQ>python -m examples timer_task
     Queued task: da952424-98d9-42e1-8851-91a30924b94b
 
     C:\...\SoonQ>
 
 **Terminal 2:**
 
-    C:\...\SoonQ>python examples\timer_worker.py
+    C:\...\SoonQ>python -m examples timer_worker
     Running task: 913d56e9-a609-4b84-b937-479a94716527
     1/3 Sleeping 3 seconds...
     2/3 Sleeping 3 seconds...

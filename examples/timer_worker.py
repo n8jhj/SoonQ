@@ -1,15 +1,14 @@
-"""Script for runnning a Worker dedicated to accomplishing TimerTasks.
+"""For runnning a Worker dedicated to accomplishing TimerTasks.
 """
 
 import soonq as sq
 
-from timer_task import TimerTask
+from .timer_task import TimerTask
 
 
-if __name__ == "__main__":
+def timer_worker():
     # Instantiate TimerTask.
     timer_task = TimerTask()
-
     # Run worker.
     worker = sq.Worker(task=timer_task)
     worker.start()
