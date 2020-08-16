@@ -1,6 +1,6 @@
 """Utility functionalities.
 
-Defines:
+Functions:
 echo
 """
 
