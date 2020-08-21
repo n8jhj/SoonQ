@@ -1,4 +1,4 @@
-"""For viewing info about tasks in queue.
+"""For viewing info about tasks in the queue.
 """
 
 import pprint
@@ -6,5 +6,5 @@ import pprint
 import soonq as sq
 
 
-def task_items():
+def view_queue():
     sq.echo(pprint.pformat(list(sq.task_items(max_entries=5))))

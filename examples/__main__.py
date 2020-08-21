@@ -1,7 +1,7 @@
 import sys
 
 from . import \
-    clear_queue, error_task, error_worker, task_items, timer_task, timer_worker
+    clear_queue, error_task, error_worker, timer_task, timer_worker, view_queue
 import soonq as sq
 
 
