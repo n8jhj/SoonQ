@@ -28,5 +28,8 @@ SCHEMA = ODict([
         queue_name='TEXT',
         started='TIMESTAMP NOT NULL',
         status='TEXT',
+        exc_type='BLOB',
+        exc_value='BLOB',
+        exc_traceback='BLOB',
     )),
 ])

@@ -1,6 +1,7 @@
 """Script for running development code.
 """
 
+
 def init_db():
     import sqlite3
     from soonq.config import DB_PATH, SCHEMA

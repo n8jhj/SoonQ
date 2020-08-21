@@ -125,3 +125,20 @@ class Broker:
                 (status, item.task_id),
             )
         con.close()
+
+    def update_exc_info(self, item, type_, value, traceback):
+        """Update exception info for the given item."""
+        con = sqlite3.connect(str(DB_PATH))
+        with con:
+            con.execute(
+                f"""
+                UPDATE {WORK_TABLENAME}
+                SET
+                    exc_type = ?,
+                    exc_value = ?,
+                    exc_traceback = ?
+                WHERE task_id = ?
+                """,
+                (type_, value, traceback, item.task_id),
+            )
+        con.close()

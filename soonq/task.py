@@ -26,6 +26,17 @@ class BaseTask(abc.ABC):
         adder.delay(9, 34)
     """
 
+    # Status options are:
+    #   detached - Instantiated, not queued.
+    #   enqueued - Queued via Broker.
+    #   dequeued - Dequeued via Worker.
+    #   running - Running via Worker.
+    #   error - Exception encountered during run.
+    #   complete - Run complete.
+    _status_options = (
+        'detached', 'enqueued', 'dequeued', 'running', 'error',
+        'complete')
+
     def __init__(self):
         self.broker = Broker()
         self.set_status('detached')
@@ -70,15 +81,8 @@ class BaseTask(abc.ABC):
         return item
 
     def set_status(self, status):
-        """Set status of the BaseTask instance. Options are:
-        detached - Instantiated, not queued.
-        enqueued - Queued via Broker.
-        dequeued - Dequeued via Worker.
-        running - Running via Worker.
-        complete - Run complete.
-        """
-        if status not in (
-                'detached', 'enqueued', 'dequeued', 'running', 'complete'):
+        """Set status of the BaseTask instance."""
+        if status not in self._status_options:
             raise ValueError(f"Task status {status!r} not recognized.")
         self.status = status
         if status == 'running':
@@ -86,6 +90,10 @@ class BaseTask(abc.ABC):
         elif status == 'complete':
             self.broker.update_status(self, status)
             self.broker.remove_work(self)
+
+    def record_exc(self, type_, value, traceback):
+        """Record the given traceback information."""
+        self.broker.update_exc_info(self, type_, value, traceback)
 
     def __repr__(self):
         return (f"<{self.__class__.__name__}(status={self.status})>")

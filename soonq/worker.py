@@ -5,6 +5,8 @@ Worker
 """
 
 import json
+import sys
+import traceback
 
 from .utils import echo
 
@@ -39,11 +41,21 @@ class Worker:
                 task_args = json.loads(task_args)
                 task_kwargs = json.loads(task_kwargs)
                 # Run.
+                error = False
                 echo(f"Running task: {task_id}")
                 self.task.set_status('running')
-                self.task.run(*task_args, **task_kwargs)
-                echo(f"Finished task: {task_id}\n")
-                self.task.set_status('complete')
+                try:
+                    self.task.run(*task_args, **task_kwargs)
+                except:
+                    # Any Exceptions will be saved.
+                    error = True
+                if error:
+                    echo(f"Error in task: {task_id}\n")
+                    self.task.set_status('error')
+                    self.task.record_exc(*sys.exc_info())
+                else:
+                    echo(f"Finished task: {task_id}\n")
+                    self.task.set_status('complete')
             except KeyboardInterrupt:
                 self.quit()
                 break
