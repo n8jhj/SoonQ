@@ -6,6 +6,7 @@ WorkItem
 
 Functions:
 clear_queue - Clear the queue.
+clear_work - Clear the table of work.
 task_items - Info about items in the queue.
 work_items - Info about items in the table of work.
 """
@@ -34,6 +35,19 @@ def clear_queue():
         )
     con.close()
     echo("Cleared the queue.")
+
+
+def clear_work():
+    """Clear the table of work."""
+    con = sqlite3.connect(str(DB_PATH))
+    with con:
+        con.execute(
+            f"""
+            DELETE FROM {WORK_TABLENAME}
+            """
+        )
+    con.close()
+    echo("Cleared table of work.")
 
 
 def task_items(max_entries=None):
