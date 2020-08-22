@@ -8,9 +8,10 @@ import soonq as sq
 
 def execute(command):
     try:
-        getattr(sys.modules[__name__], command)()
+        cmd = getattr(sys.modules[__name__], command)
     except AttributeError:
         sq.echo(f"Example {command!r} not recognized.")
+    cmd()
 
 
 command = sys.argv[1]
