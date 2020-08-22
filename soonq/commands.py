@@ -1,15 +1,19 @@
 """Useful commands.
 
 Classes:
-QueueInfo
+QueueItem
+WorkItem
 
 Functions:
 clear_queue - Clear the queue.
 task_items - Info about items in the queue.
+work_items - Info about items in the table of work.
 """
 
 from collections import namedtuple
+import pickle
 import sqlite3
+import traceback
 
 from .config import DB_PATH, QUEUE_TABLENAME, SCHEMA, WORK_TABLENAME
 from .utils import echo
@@ -77,8 +81,11 @@ def work_items(max_entries=None):
             """
         )
     if max_entries:
-        items = map(WorkItem._make, c.fetchmany(size=max_entries))
+        entries = c.fetchmany(size=max_entries)
     else:
-        items = map(WorkItem._make, c.fetchall())
+        entries = c.fetchall()
     con.close()
-    return items
+    for row in entries:
+        exc_type, exc_value = tuple(pickle.loads(bin_) for bin_ in row[-3:-1])
+        exc_tb = ''.join(pickle.loads(row[-1]).format())
+        yield WorkItem(*row[:-3], exc_type, exc_value, exc_tb)

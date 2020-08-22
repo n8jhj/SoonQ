@@ -41,18 +41,19 @@ class Worker:
                 task_args = json.loads(task_args)
                 task_kwargs = json.loads(task_kwargs)
                 # Run.
-                error = False
+                exc_info = None
                 echo(f"Running task: {task_id}")
                 self.task.set_status('running')
                 try:
                     self.task.run(*task_args, **task_kwargs)
                 except:
                     # Any Exceptions will be saved.
-                    error = True
-                if error:
+                    exc_info = list(sys.exc_info())
+                    exc_info[-1] = traceback.extract_tb(exc_info[-1])
+                if exc_info:
                     echo(f"Error in task: {task_id}\n")
                     self.task.set_status('error')
-                    self.task.record_exc(*sys.exc_info())
+                    self.task.record_exc(*exc_info)
                 else:
                     echo(f"Finished task: {task_id}\n")
                     self.task.set_status('complete')
