@@ -5,6 +5,7 @@ Broker
 """
 
 import datetime as dt
+import pickle
 import sqlite3
 
 from .config import DB_PATH, QUEUE_TABLENAME, WORK_TABLENAME
@@ -129,6 +130,10 @@ class Broker:
     def update_exc_info(self, item, type_, value, traceback):
         """Update exception info for the given item."""
         con = sqlite3.connect(str(DB_PATH))
+        # Pickle objects to be stored as BLOB.
+        ptype = pickle.dumps(type_, protocol=pickle.HIGHEST_PROTOCOL)
+        pvalue = pickle.dumps(value, protocol=pickle.HIGHEST_PROTOCOL)
+        ptraceback = pickle.dumps(traceback, protocol=pickle.HIGHEST_PROTOCOL)
         with con:
             con.execute(
                 f"""
@@ -139,6 +144,6 @@ class Broker:
                     exc_traceback = ?
                 WHERE task_id = ?
                 """,
-                (type_, value, traceback, item.task_id),
+                (ptype, pvalue, ptraceback, item.task_id),
             )
         con.close()
