@@ -4,7 +4,7 @@ Classes:
 Worker
 """
 
-import json
+import pickle
 import sys
 import traceback
 
@@ -38,8 +38,8 @@ class Worker:
                 self.waiting = False
                 self.task.set_status('dequeued')
                 task_id, _, _, _, task_args, task_kwargs = dequeued_item
-                task_args = json.loads(task_args)
-                task_kwargs = json.loads(task_kwargs)
+                task_args = pickle.loads(task_args)
+                task_kwargs = pickle.loads(task_kwargs)
                 # Run.
                 exc_info = None
                 echo(f"Running task: {task_id}")

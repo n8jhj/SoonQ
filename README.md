@@ -10,7 +10,7 @@ As of yet, the vision of a subprocess-based workflow has not been realized. Howe
 `pip install soonq`
 
 ## Usage
-Users must create their own subclass of `soonq.BaseTask`. Subclasses must define a `run()` method, which contains the business logic for the task (what we care about). At least for now, input arguments to this method are restricted to being JSON serializable.
+Users must create their own subclass of `soonq.BaseTask`. Subclasses must define a `run()` method, which contains the business logic for the task (what we care about). Input arguments to this method are restricted to being serializable via the pickle module.
 
 ## Running the examples
 

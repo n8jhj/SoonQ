@@ -30,7 +30,7 @@ class SimTask(sq.BaseTask):
         """Simulate subject to the parameters specified in the given
         project.
         """
-        sq.echo(f"Running project {project.name!r}...")
+        sq.echo(f"Running {project.name!r}...")
         project.run()
         sq.echo(f"Project {project.name!r} finished.")
 

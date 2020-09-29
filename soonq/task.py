@@ -5,7 +5,7 @@ BaseTask - Base task class.
 """
 
 import abc
-import json
+import pickle
 import uuid
 
 from .broker import Broker
@@ -60,8 +60,8 @@ class BaseTask(abc.ABC):
             self.task_id = str(uuid.uuid4())
             task = dict(
                 task_id=self.task_id,
-                args=json.dumps(args),
-                kwargs=json.dumps(kwargs),
+                args=pickle.dumps(args, protocol=pickle.HIGHEST_PROTOCOL),
+                kwargs=pickle.dumps(kwargs, protocol=pickle.HIGHEST_PROTOCOL),
             )
             self.broker.enqueue(
                 item=task, queue_name=self.task_name)
