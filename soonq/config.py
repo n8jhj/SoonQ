@@ -20,8 +20,8 @@ SCHEMA = ODict([
         queue_name='TEXT',
         position='INTEGER UNIQUE NOT NULL',
         published='TIMESTAMP NOT NULL',
-        args='TEXT',
-        kwargs='TEXT',
+        args='BLOB',
+        kwargs='BLOB',
     )),
     (WORK_TABLENAME, ODict(
         task_id='TEXT PRIMARY KEY NOT NULL',
