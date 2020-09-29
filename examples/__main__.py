@@ -3,8 +3,10 @@ import sys
 from . import (
     clear_queue, clear_work,
     error_task, error_worker,
+    sim_task, sim_worker,
     timer_task, timer_worker,
-    view_queue, view_work)
+    view_queue, view_work,
+)
 import soonq as sq
 
 
