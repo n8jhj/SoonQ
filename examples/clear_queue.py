@@ -1,4 +1,4 @@
-"""For clearing the queue.
+"""Clear the queue.
 """
 
 import soonq as sq

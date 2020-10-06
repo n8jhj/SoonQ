@@ -1,4 +1,4 @@
-"""For creating timer tasks.
+"""Create a TimerTask which will run a timer.
 """
 
 import time

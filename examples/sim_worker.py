@@ -1,4 +1,4 @@
-"""For running a Worker dedicated to accomplishing SimTasks.
+"""Run a Worker dedicated to accomplishing SimTasks.
 """
 
 import soonq as sq

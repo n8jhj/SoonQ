@@ -1,4 +1,4 @@
-"""For creating simulation tasks.
+"""Create a SimTask which will run a short simulation.
 """
 
 import random

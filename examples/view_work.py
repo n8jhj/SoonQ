@@ -1,4 +1,4 @@
-"""For viewing items in the work table.
+"""View items in the table of work.
 """
 
 import pprint

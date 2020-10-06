@@ -1,4 +1,4 @@
-"""For running a Worker dedicated to accomplishing ErrorTasks.
+"""Run a Worker dedicated to accomplishing ErrorTasks.
 """
 
 import soonq as sq

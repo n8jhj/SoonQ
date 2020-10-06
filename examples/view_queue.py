@@ -1,4 +1,4 @@
-"""For viewing info about tasks in the queue.
+"""View info about tasks in the queue.
 """
 
 import pprint

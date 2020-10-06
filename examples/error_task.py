@@ -1,4 +1,4 @@
-"""For creating tasks that will cause an Exception.
+"""Create an ErrorTask which will cause an Exception.
 """
 
 import random

@@ -1,4 +1,4 @@
-"""For runnning a Worker dedicated to accomplishing TimerTasks.
+"""Run a Worker dedicated to accomplishing TimerTasks.
 """
 
 import soonq as sq

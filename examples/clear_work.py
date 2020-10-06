@@ -1,4 +1,4 @@
-"""For clearing the table of work.
+"""Clear the table of work.
 """
 
 import soonq as sq
