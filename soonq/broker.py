@@ -28,6 +28,11 @@ class Broker:
             )
             max_position = c.fetchone()  # Returns a tuple.
             new_position = max_position[0] + 1 if max_position else 0
+            # Serialize objects to be stored as BLOB.
+            item['args'] = pickle.dumps(
+                item['args'], protocol=pickle.HIGHEST_PROTOCOL)
+            item['kwargs'] = pickle.dumps(
+                item['kwargs'], protocol=pickle.HIGHEST_PROTOCOL)
             con.execute(
                 f"""
                 INSERT INTO {QUEUE_TABLENAME} (
@@ -130,7 +135,7 @@ class Broker:
     def update_exc_info(self, item, type_, value, traceback):
         """Update exception info for the given item."""
         con = sqlite3.connect(str(DB_PATH))
-        # Pickle objects to be stored as BLOB.
+        # Serialize objects to be stored as BLOB.
         ptype = pickle.dumps(type_, protocol=pickle.HIGHEST_PROTOCOL)
         pvalue = pickle.dumps(value, protocol=pickle.HIGHEST_PROTOCOL)
         ptraceback = pickle.dumps(traceback, protocol=pickle.HIGHEST_PROTOCOL)

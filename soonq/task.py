@@ -60,8 +60,8 @@ class BaseTask(abc.ABC):
             self.task_id = str(uuid.uuid4())
             task = dict(
                 task_id=self.task_id,
-                args=pickle.dumps(args, protocol=pickle.HIGHEST_PROTOCOL),
-                kwargs=pickle.dumps(kwargs, protocol=pickle.HIGHEST_PROTOCOL),
+                args=args,
+                kwargs=kwargs,
             )
             self.broker.enqueue(
                 item=task, queue_name=self.task_name)
