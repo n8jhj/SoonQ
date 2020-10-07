@@ -16,8 +16,8 @@ EXAMPLE_FUNCTIONS = (
 )
 EXAMPLE_MODULES = [importlib.import_module(func, package='examples')
     for func in EXAMPLE_FUNCTIONS]
-EXAMPLE_MODULE_NAMES = [mod.__name__.rsplit('.', maxsplit=1)[-1]
-    for mod in EXAMPLE_MODULES]
+EXAMPLE_MODULE_MAP = {mod.__name__.rsplit('.', maxsplit=1)[-1]: mod
+    for mod in EXAMPLE_MODULES}
 EXAMPLE_MODULE_DESCRIPTIONS = [mod.__doc__.rstrip('\n')
     for mod in EXAMPLE_MODULES]
 
@@ -28,7 +28,7 @@ OPTIONS = [(HELP_OPTIONS, "Show this message and exit.")]
 
 def execute(command):
     try:
-        cmd = getattr(sys.modules[__name__], command)
+        cmd = getattr(EXAMPLE_MODULE_MAP[command], command)
     except AttributeError:
         sq.echo(f"Example {command!r} not recognized.")
         return
@@ -42,8 +42,9 @@ def print_help():
         sq.echo(f"  {', '.join(opts)}  {desc}")
     sq.echo()
     sq.echo("Commands:")
-    max_modname_len = max(len(mod) for mod in EXAMPLE_MODULE_NAMES)
-    for cmd, descr in zip(EXAMPLE_MODULE_NAMES, EXAMPLE_MODULE_DESCRIPTIONS):
+    max_modname_len = max(len(mod) for mod in EXAMPLE_MODULE_MAP)
+    for cmd, descr in zip(
+            EXAMPLE_MODULE_MAP.keys(), EXAMPLE_MODULE_DESCRIPTIONS):
         sq.echo(f"  {cmd:<{max_modname_len+2}}{descr}")
 
 
