@@ -11,17 +11,80 @@ task_items - Info about items in the queue.
 work_items - Info about items in the table of work.
 """
 
-from collections import namedtuple
 import pickle
 import sqlite3
-import traceback
 
-from .config import DB_PATH, QUEUE_TABLENAME, SCHEMA, WORK_TABLENAME
+from .config import DB_PATH, QUEUE_TABLENAME, WORK_TABLENAME
 from .utils import echo
 
 
-QueueItem = namedtuple('QueueItem', SCHEMA[QUEUE_TABLENAME].keys())
-WorkItem = namedtuple('WorkItem', SCHEMA[WORK_TABLENAME].keys())
+# TODO: Dynamically create QueueItem and WorkItem classes based on
+# configured database column names.
+# This will also involve updating __repr__ to dynamically reference the
+# signature of __init__.
+
+class QueueItem:
+    def __init__(self,
+            task_id,
+            queue_name,
+            position,
+            published,
+            args,
+            kwargs):
+        self.task_id = task_id
+        self.queue_name = queue_name
+        self.position = position
+        self.published = published
+        self.args = pickle.loads(args)
+        self.kwargs = pickle.loads(kwargs)
+
+    @classmethod
+    def from_tuple(cls, tuple_):
+        return cls(*tuple_)
+
+    def __repr__(self):
+        return "QueueItem({}={}, {}={}, {}={}, {}={}, {}={}, {}={})".format(
+            "task_id", self.task_id,
+            "queue_name", self.queue_name,
+            "position", self.position,
+            "published", self.published,
+            "args", self.args,
+            "kwargs", self.kwargs,
+        )
+
+
+class WorkItem:
+    def __init__(self,
+            task_id,
+            queue_name,
+            started,
+            status,
+            exc_type,
+            exc_value,
+            exc_traceback):
+        self.task_id = task_id
+        self.queue_name = queue_name
+        self.started = started
+        self.status = status
+        self.exc_type = pickle.loads(exc_type)
+        self.exc_value = pickle.loads(exc_value)
+        self.exc_traceback = "".join(pickle.loads(exc_traceback).format())
+
+    @classmethod
+    def from_tuple(cls, tuple_):
+        return cls(*tuple_)
+
+    def __repr__(self):
+        return "WorkItem({}={}, {}={}, {}={}, {}={}, {}={}, {}={}, {}={})"\
+            .format(
+                "task_id", self.task_id,
+                "queue_name", self.queue_name,
+                "started", self.started,
+                "status", self.status,
+                "exc_type", self.exc_type,
+                "exc_value", self.exc_value,
+                "exc_traceback", "...",
+            )
 
 
 def clear_queue():
@@ -68,9 +131,9 @@ def task_items(max_entries=None):
             """
         )
     if max_entries:
-        items = map(QueueItem._make, c.fetchmany(size=max_entries))
+        items = map(QueueItem.from_tuple, c.fetchmany(size=max_entries))
     else:
-        items = map(QueueItem._make, c.fetchall())
+        items = map(QueueItem.from_tuple, c.fetchall())
     con.close()
     return items
 
@@ -95,11 +158,8 @@ def work_items(max_entries=None):
             """
         )
     if max_entries:
-        entries = c.fetchmany(size=max_entries)
+        items = map(WorkItem.from_tuple, c.fetchmany(size=max_entries))
     else:
-        entries = c.fetchall()
+        items = map(WorkItem.from_tuple, c.fetchall())
     con.close()
-    for row in entries:
-        exc_type, exc_value = tuple(pickle.loads(bin_) for bin_ in row[-3:-1])
-        exc_tb = ''.join(pickle.loads(row[-1]).format())
-        yield WorkItem(*row[:-3], exc_type, exc_value, exc_tb)
+    return items
