@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "SoonQ"
-version = "0.3.0"
+version = "0.3.1"
 description = "Subprocess-based task queue."
 license = "MIT"
 authors = ["Nathaniel Jones <nathaniel.j.jones@wsu.edu>"]
