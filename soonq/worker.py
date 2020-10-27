@@ -38,18 +38,11 @@ class Worker:
                 self.waiting = False
                 self.task.set_status('dequeued')
                 task_id, _, _, _, task_args, task_kwargs = dequeued_item
-                task_args = pickle.loads(task_args)
-                task_kwargs = pickle.loads(task_kwargs)
                 # Run.
-                exc_info = None
                 echo(f"Running task: {task_id}")
                 self.task.set_status('running')
-                try:
-                    self.task.run(*task_args, **task_kwargs)
-                except:
-                    # Any Exceptions will be saved.
-                    exc_info = list(sys.exc_info())
-                    exc_info[-1] = traceback.extract_tb(exc_info[-1])
+                # Pass off execution to subprocess.
+                exc_info = self.subprocess_run(task_args, task_kwargs)
                 if exc_info:
                     echo(f"Error in task: {task_id}\n")
                     self.task.set_status('error')
@@ -60,6 +53,18 @@ class Worker:
             except KeyboardInterrupt:
                 self.quit()
                 break
+
+    def subprocess_run(self, task_args, task_kwargs):
+        task_args = pickle.loads(task_args)
+        task_kwargs = pickle.loads(task_kwargs)
+        exc_info = None
+        try:
+            self.task.run(*task_args, **task_kwargs)
+        except:
+            # Any Exceptions will be saved.
+            exc_info = list(sys.exc_info())
+            exc_info[-1] = traceback.extract_tb(exc_info[-1])
+        return exc_info
 
     def quit(self):
         """Stop working."""
