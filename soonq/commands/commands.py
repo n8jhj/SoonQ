@@ -14,8 +14,8 @@ work_items - Info about items in the table of work.
 import pickle
 import sqlite3
 
-from .config import DB_PATH, QUEUE_TABLENAME, WORK_TABLENAME
-from .utils import echo
+from soonq.config import DB_PATH, QUEUE_TABLENAME, WORK_TABLENAME
+from soonq.utils import echo
 
 
 # TODO: Dynamically create QueueItem and WorkItem classes based on

@@ -21,8 +21,12 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.6"
+click = ">=7.0"
 
 [tool.poetry.dev-dependencies]
+
+[tool.poetry.scripts]
+soonq = "soonq.commands.cli:soonq"
 
 [build-system]
 requires = ["poetry>=0.12"]
