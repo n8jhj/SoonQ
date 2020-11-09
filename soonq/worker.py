@@ -38,6 +38,8 @@ class Worker:
                 self.waiting = False
                 self.task.set_status('dequeued')
                 task_id, _, _, _, task_args, task_kwargs = dequeued_item
+                task_args = pickle.loads(task_args)
+                task_kwargs = pickle.loads(task_kwargs)
                 # Run.
                 echo(f"Running task: {task_id}")
                 self.task.set_status('running')
@@ -55,8 +57,6 @@ class Worker:
                 break
 
     def subprocess_run(self, task_args, task_kwargs):
-        task_args = pickle.loads(task_args)
-        task_kwargs = pickle.loads(task_kwargs)
         exc_info = None
         try:
             self.task.run(*task_args, **task_kwargs)
