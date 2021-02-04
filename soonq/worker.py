@@ -36,22 +36,22 @@ class Worker:
                         self.waiting = True
                     continue
                 self.waiting = False
-                self.task.set_status('dequeued')
+                self.task.set_status("dequeued")
                 task_id, _, _, _, task_args, task_kwargs = dequeued_item
                 task_args = pickle.loads(task_args)
                 task_kwargs = pickle.loads(task_kwargs)
                 # Run.
                 echo(f"Running task: {task_id}")
-                self.task.set_status('running')
+                self.task.set_status("running")
                 # Pass off execution to subprocess.
                 exc_info = self.subprocess_run(task_args, task_kwargs)
                 if exc_info:
                     echo(f"Error in task: {task_id}\n")
-                    self.task.set_status('error')
+                    self.task.set_status("error")
                     self.task.record_exc(*exc_info)
                 else:
                     echo(f"Finished task: {task_id}\n")
-                    self.task.set_status('complete')
+                    self.task.set_status("complete")
             except KeyboardInterrupt:
                 self.quit()
                 break

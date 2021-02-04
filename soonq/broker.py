@@ -12,8 +12,7 @@ from .config import DB_PATH, QUEUE_TABLENAME, WORK_TABLENAME
 
 
 class Broker:
-    """Implements a basic FIFO queue using SQLite.
-    """
+    """Implements a basic FIFO queue using SQLite."""
 
     def enqueue(self, item, queue_name):
         """Enqueue the given item in the queue with the given name."""
@@ -29,10 +28,14 @@ class Broker:
             max_position = c.fetchone()  # Returns a tuple.
             new_position = max_position[0] + 1 if max_position else 0
             # Serialize objects to be stored as BLOB.
-            item['args'] = pickle.dumps(
-                item['args'], protocol=pickle.HIGHEST_PROTOCOL)
-            item['kwargs'] = pickle.dumps(
-                item['kwargs'], protocol=pickle.HIGHEST_PROTOCOL)
+            item["args"] = pickle.dumps(
+                item["args"],
+                protocol=pickle.HIGHEST_PROTOCOL,
+            )
+            item["kwargs"] = pickle.dumps(
+                item["kwargs"],
+                protocol=pickle.HIGHEST_PROTOCOL,
+            )
             con.execute(
                 f"""
                 INSERT INTO {QUEUE_TABLENAME} (
@@ -46,8 +49,12 @@ class Broker:
                 VALUES (?, ?, ?, ?, ?, ?)
                 """,
                 (
-                    item['task_id'], queue_name, new_position,
-                    dt.datetime.now(), item['args'], item['kwargs'],
+                    item["task_id"],
+                    queue_name,
+                    new_position,
+                    dt.datetime.now(),
+                    item["args"],
+                    item["kwargs"],
                 ),
             )
         con.close()
@@ -76,7 +83,7 @@ class Broker:
             )
             dequeued_item = c.fetchone()
             if dequeued_item:
-                item_id = dequeued_item['task_id']
+                item_id = dequeued_item["task_id"]
                 con.execute(
                     f"""
                     DELETE FROM {QUEUE_TABLENAME}

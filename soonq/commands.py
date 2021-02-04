@@ -23,14 +23,9 @@ from .utils import echo
 # This will also involve updating __repr__ to dynamically reference the
 # signature of __init__.
 
+
 class QueueItem:
-    def __init__(self,
-            task_id,
-            queue_name,
-            position,
-            published,
-            args,
-            kwargs):
+    def __init__(self, task_id, queue_name, position, published, args, kwargs):
         self.task_id = task_id
         self.queue_name = queue_name
         self.position = position
@@ -44,24 +39,32 @@ class QueueItem:
 
     def __repr__(self):
         return "QueueItem({}={}, {}={}, {}={}, {}={}, {}={}, {}={})".format(
-            "task_id", self.task_id,
-            "queue_name", self.queue_name,
-            "position", self.position,
-            "published", self.published,
-            "args", self.args,
-            "kwargs", self.kwargs,
+            "task_id",
+            self.task_id,
+            "queue_name",
+            self.queue_name,
+            "position",
+            self.position,
+            "published",
+            self.published,
+            "args",
+            self.args,
+            "kwargs",
+            self.kwargs,
         )
 
 
 class WorkItem:
-    def __init__(self,
-            task_id,
-            queue_name,
-            started,
-            status,
-            exc_type,
-            exc_value,
-            exc_traceback):
+    def __init__(
+        self,
+        task_id,
+        queue_name,
+        started,
+        status,
+        exc_type,
+        exc_value,
+        exc_traceback,
+    ):
         self.task_id = task_id
         self.queue_name = queue_name
         self.started = started
@@ -75,16 +78,24 @@ class WorkItem:
         return cls(*tuple_)
 
     def __repr__(self):
-        return "WorkItem({}={}, {}={}, {}={}, {}={}, {}={}, {}={}, {}={})"\
-            .format(
-                "task_id", self.task_id,
-                "queue_name", self.queue_name,
-                "started", self.started,
-                "status", self.status,
-                "exc_type", self.exc_type,
-                "exc_value", self.exc_value,
-                "exc_traceback", "...",
+        return (
+            "WorkItem({}={}, {}={}, {}={}, {}={}, {}={}, {}={}, {}={})".format(
+                "task_id",
+                self.task_id,
+                "queue_name",
+                self.queue_name,
+                "started",
+                self.started,
+                "status",
+                self.status,
+                "exc_type",
+                self.exc_type,
+                "exc_value",
+                self.exc_value,
+                "exc_traceback",
+                "...",
             )
+        )
 
 
 def clear_queue():

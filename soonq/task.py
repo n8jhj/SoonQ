@@ -34,12 +34,17 @@ class BaseTask(abc.ABC):
     #   error - Exception encountered during run.
     #   complete - Run complete.
     _status_options = (
-        'detached', 'enqueued', 'dequeued', 'running', 'error',
-        'complete')
+        "detached",
+        "enqueued",
+        "dequeued",
+        "running",
+        "error",
+        "complete",
+    )
 
     def __init__(self):
         self.broker = Broker()
-        self.set_status('detached')
+        self.set_status("detached")
 
     @property
     @classmethod
@@ -63,19 +68,19 @@ class BaseTask(abc.ABC):
                 args=args,
                 kwargs=kwargs,
             )
-            self.broker.enqueue(
-                item=task, queue_name=self.task_name)
-            self.set_status('enqueued')
+            self.broker.enqueue(item=task, queue_name=self.task_name)
+            self.set_status("enqueued")
             echo(f"Queued task: {self.task_id}")
         except Exception:
             raise RuntimeError(
-                f"Unable to publish task {self.task_id} to the broker.")
+                f"Unable to publish task {self.task_id} to the broker."
+            )
 
     def dequeue(self):
         """Dequeue one task of this type."""
         item = self.broker.dequeue(queue_name=self.task_name)
         try:
-            self.task_id = item['task_id']
+            self.task_id = item["task_id"]
         except TypeError:
             self.task_id = None
         return item
@@ -85,9 +90,9 @@ class BaseTask(abc.ABC):
         if status not in self._status_options:
             raise ValueError(f"Task status {status!r} not recognized.")
         self.status = status
-        if status == 'running':
+        if status == "running":
             self.broker.add_work(self, status)
-        elif status == 'complete':
+        elif status == "complete":
             self.broker.update_status(self, status)
             self.broker.remove_work(self)
 
@@ -96,4 +101,4 @@ class BaseTask(abc.ABC):
         self.broker.update_exc_info(self, type_, value, traceback)
 
     def __repr__(self):
-        return (f"<{self.__class__.__name__}(status={self.status})>")
+        return f"<{self.__class__.__name__}(status={self.status})>"
