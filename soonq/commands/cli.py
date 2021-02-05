@@ -7,7 +7,8 @@ import click
 
 import soonq as sq
 from .commands import (
-    clear_queue, task_items,
+    clear_queue,
+    task_items,
 )
 from ..worker import Worker
 import examples
@@ -26,9 +27,13 @@ def clear():
 
 
 @soonq.command()
-@click.option('-a/-A', '--all-entries/--head-only', default=False,
+@click.option(
+    "-a/-A",
+    "--all-entries/--head-only",
+    default=False,
     show_default=True,
-    help="Whether to show all entries.")
+    help="Whether to show all entries.",
+)
 def view(all_entries):
     """View tasks in the queue."""
     max_entries = None if all_entries else 5
@@ -41,8 +46,8 @@ def view(all_entries):
 
 
 @soonq.command()
-@click.argument('queue_name')
-@click.argument('args', nargs=-1)
+@click.argument("queue_name")
+@click.argument("args", nargs=-1)
 def enqueue(queue_name, args):
     """Enqueue a single task in the named queue."""
     task_cls = get_taskclass(queue_name)
@@ -51,7 +56,7 @@ def enqueue(queue_name, args):
 
 
 @soonq.command()
-@click.argument('queue_name')
+@click.argument("queue_name")
 def worker(queue_name):
     """Start a worker in the current process."""
     task_cls = get_taskclass(queue_name)
@@ -61,7 +66,7 @@ def worker(queue_name):
 
 
 @soonq.command()
-@click.argument('queue_name')
+@click.argument("queue_name")
 def run(queue_name):
     """Run a single task from the named queue."""
     task_cls = get_taskclass(queue_name)
@@ -74,9 +79,8 @@ def get_taskclass(name):
     """Returns the named subclass of BaseTask. Raises a ValueError if
     the class name is not recognized.
     """
-    istasksubclass = (
-        lambda x:
-        inspect.isclass(x) and issubclass(x, sq.BaseTask)
+    istasksubclass = lambda x: inspect.isclass(x) and issubclass(
+        x, sq.BaseTask
     )
     task_classes = dict(inspect.getmembers(examples, istasksubclass))
     try:
