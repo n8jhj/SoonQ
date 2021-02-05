@@ -25,7 +25,9 @@ class TimerTask(sq.BaseTask):
     """Task to count to a certain number a specified number of times.
     """
 
-    task_name = 'TimerTask'
+    def scrub_inputs(self, args, kwargs):
+        """Make sure arguments are integers."""
+        return tuple(int(x) for x in args), kwargs
 
     def run(self, interval, n):
         """Count at the given interval the given number of times.

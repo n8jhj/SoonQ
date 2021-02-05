@@ -10,8 +10,6 @@ import soonq as sq
 class ErrorTask(sq.BaseTask):
     """Task that results in an Exception."""
 
-    task_name = 'ErrorTask'
-
     def run(self):
         """Wait a random number of seconds before raising a
         RuntimeException.

@@ -21,10 +21,7 @@ class Project:
 
 
 class SimTask(sq.BaseTask):
-    """Task to perform an arbitrary simulation.
-    """
-
-    task_name = 'SimTask'
+    """Task to perform an arbitrary simulation."""
 
     def run(self, project):
         """Simulate subject to the parameters specified in the given

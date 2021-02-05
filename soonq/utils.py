@@ -1,21 +1,15 @@
 """Utility functionalities.
 
 Functions:
-echo
+echo - Wrapper for click.echo.
 """
 
 import functools
 
-try:
-    import click
-    feedback_func = click.echo
-except ModuleNotFoundError:
-    feedback_func = print
+import click
 
 
-@functools.wraps(feedback_func)
+@functools.wraps(click.echo)
 def echo(*args, **kwargs):
-    """Function for giving feedback. Tries to use click.echo, but
-    defaults to print if Click is not installed.
-    """
-    return feedback_func(*args, **kwargs)
+    """Wrapper for click.echo."""
+    return click.echo(*args, **kwargs)
