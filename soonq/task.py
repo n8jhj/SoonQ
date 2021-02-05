@@ -17,7 +17,6 @@ class BaseTask(abc.ABC):
 
     Example Usage:
         class AdderTask(BaseTask):
-            task_name = 'AdderTask'
             def run(self, a, b):
                 result = a + b
                 return result
@@ -42,10 +41,12 @@ class BaseTask(abc.ABC):
         self.set_status('detached')
 
     @property
-    @classmethod
-    @abc.abstractmethod
-    def task_name(cls):
-        pass
+    def task_name(self):
+        return type(self).__name__
+
+    def scrub_inputs(self, args, kwargs):
+        """Subclasses can override. By default, this does nothing."""
+        return args, kwargs
 
     @abc.abstractmethod
     def run(self, *args, **kwargs):
@@ -56,6 +57,7 @@ class BaseTask(abc.ABC):
         """Have the broker enqueue this task, thereby delaying its
         execution until some future time.
         """
+        args, kwargs = self.scrub_inputs(args, kwargs)
         try:
             self.task_id = str(uuid.uuid4())
             task = dict(
