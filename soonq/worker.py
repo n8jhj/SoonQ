@@ -73,8 +73,16 @@ class Worker:
         popen_kwargs["stdin"] = PIPE
         popen_kwargs["stderr"] = PIPE
         popen_kwargs["universal_newlines"] = True
+
+        # TODO: Remove this.
+        import time
+
         subp = Popen(**popen_kwargs)
+        while subp.poll() is None:
+            print("Sleeping for a second...")
+            time.sleep(1)
         outs, errs = subp.communicate()
+        print(f"outs: {outs}, errs: {errs}")
         return errs
 
     def quit(self):
