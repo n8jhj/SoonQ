@@ -1,17 +1,14 @@
 """Command line interface.
 """
 
-import inspect
-
 import click
 
-import soonq as sq
 from .commands import (
     clear_queue,
     task_items,
 )
+from ..utils import get_taskclass
 from ..worker import Worker
-import examples
 
 
 @click.group()
@@ -58,7 +55,7 @@ def enqueue(queue_name, args):
 @soonq.command()
 @click.argument("queue_name")
 def worker(queue_name):
-    """Start a worker in the current process."""
+    """Start a worker on the named queue in the current process."""
     task_cls = get_taskclass(queue_name)
     inst = task_cls()
     worker = Worker(inst)
@@ -73,18 +70,3 @@ def run(queue_name):
     inst = task_cls()
     worker = Worker(inst)
     worker.start()
-
-
-def get_taskclass(name):
-    """Returns the named subclass of BaseTask. Raises a ValueError if
-    the class name is not recognized.
-    """
-    istasksubclass = lambda x: inspect.isclass(x) and issubclass(
-        x, sq.BaseTask
-    )
-    task_classes = dict(inspect.getmembers(examples, istasksubclass))
-    try:
-        task_cls = task_classes[name]
-    except KeyError:
-        raise ValueError(f"Unrecognized task class name {name!r}")
-    return task_cls

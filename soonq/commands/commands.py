@@ -9,13 +9,16 @@ clear_queue - Clear the queue.
 clear_work - Clear the table of work.
 task_items - Info about items in the queue.
 work_items - Info about items in the table of work.
+run_work - Run a given BaseTask instance.
 """
 
 import pickle
 import sqlite3
+import sys
+import traceback
 
 from soonq.config import DB_PATH, QUEUE_TABLENAME, WORK_TABLENAME
-from soonq.utils import echo
+from soonq.utils import echo, get_taskclass
 
 
 # TODO: Dynamically create QueueItem and WorkItem classes based on
@@ -162,8 +165,15 @@ def work_items(max_entries=None):
         c = con.execute(
             f"""
             SELECT
-                task_id, queue_name, started, status,
-                exc_type, exc_value, exc_traceback
+                task_id,
+                queue_name,
+                started,
+                status,
+                args,
+                kwargs,
+                exc_type,
+                exc_value,
+                exc_traceback
             FROM {WORK_TABLENAME}
             ORDER BY started ASC
             """
@@ -174,3 +184,65 @@ def work_items(max_entries=None):
         items = map(WorkItem.from_tuple, c.fetchall())
     con.close()
     return items
+
+def remove_work(self, item):
+    """Remove the given item from the work table."""
+    con = sqlite3.connect(str(DB_PATH))
+    with con:
+        con.execute(
+            f"""
+            DELETE FROM {WORK_TABLENAME}
+            WHERE task_id = ?
+            """,
+            (item.task_id,),
+        )
+    con.close()
+
+
+def run_work(task_clsname, task_id):
+    """Run the task in the work table with the given ID."""
+    # Get task from work table.
+    con = sqlite3.connect(str(DB_PATH))
+    with con:
+        c = con.execute(
+            f"""
+            SELECT
+                task_id,
+                queue_name,
+                started,
+                status,
+                args,
+                kwargs,
+                exc_type,
+                exc_value,
+                exc_traceback
+            FROM {WORK_TABLENAME}
+            WHERE task_id = ?
+            """,
+            (task_id,),
+        )
+        (
+            task_id,
+            queue_name,
+            started,
+            status,
+            task_args,
+            task_kwargs,
+            exc_type,
+            exc_value,
+            exc_traceback,
+        ) = c.fetchone()
+        # _, _, _, _, task_args, task_kwargs, _, _, _ = c.fetchone()
+    con.close()
+    # Run task.
+    task_args = pickle.loads(task_args)
+    task_kwargs = pickle.loads(task_kwargs)
+    exc_info = None
+    task = get_taskclass(task_clsname)()
+    try:
+        task.run(*task_args, **task_kwargs)
+    except:
+        # Any Exceptions will be saved.
+        exc_info = list(sys.exc_info())
+        exc_info[-1] = traceback.extract_tb(exc_info[-1])
+    return exc_info

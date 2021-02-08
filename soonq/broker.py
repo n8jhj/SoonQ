@@ -94,7 +94,7 @@ class Broker:
         con.close()
         return dequeued_item
 
-    def add_work(self, item, status):
+    def add_work(self, item, status, iargs, ikwargs):
         """Add the given item to the work table."""
         con = sqlite3.connect(str(DB_PATH))
         with con:
@@ -104,11 +104,20 @@ class Broker:
                     task_id,
                     queue_name,
                     started,
-                    status
+                    status,
+                    args,
+                    kwargs
                 )
-                VALUES (?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?)
                 """,
-                (item.task_id, item.task_name, dt.datetime.now(), status),
+                (
+                    item.task_id,
+                    item.task_name,
+                    dt.datetime.now(),
+                    status,
+                    iargs,
+                    ikwargs,
+                ),
             )
         con.close()
 

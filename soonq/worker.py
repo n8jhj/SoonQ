@@ -4,9 +4,8 @@ Classes:
 Worker
 """
 
-import pickle
-import sys
-import traceback
+import platform
+from subprocess import Popen, CREATE_NEW_CONSOLE, PIPE
 
 from .utils import echo
 
@@ -32,19 +31,17 @@ class Worker:
                 dequeued_item = self.task.dequeue()
                 if not dequeued_item:
                     if not self.waiting:
-                        echo(f"Waiting for next task... (Ctrl + C to quit)\n")
+                        echo(f"Waiting for next task...\n")
                         self.waiting = True
                     continue
                 self.waiting = False
                 self.task.set_status("dequeued")
                 task_id, _, _, _, task_args, task_kwargs = dequeued_item
-                task_args = pickle.loads(task_args)
-                task_kwargs = pickle.loads(task_kwargs)
                 # Run.
+                self.task.slate(task_args, task_kwargs)
                 echo(f"Running task: {task_id}")
-                self.task.set_status("running")
                 # Pass off execution to subprocess.
-                exc_info = self.subprocess_run(task_args, task_kwargs)
+                exc_info = self.subprocess_run(task_id)
                 if exc_info:
                     echo(f"Error in task: {task_id}\n")
                     self.task.set_status("error")
@@ -56,15 +53,29 @@ class Worker:
                 self.quit()
                 break
 
-    def subprocess_run(self, task_args, task_kwargs):
-        exc_info = None
-        try:
-            self.task.run(*task_args, **task_kwargs)
-        except:
-            # Any Exceptions will be saved.
-            exc_info = list(sys.exc_info())
-            exc_info[-1] = traceback.extract_tb(exc_info[-1])
-        return exc_info
+    def subprocess_run(self, task_id):
+        popen_kwargs = dict(
+            args=[
+                "python",
+                "soonq/commands/runtask.py",
+                self.task.task_name,
+                str(task_id),
+            ],
+        )
+        if platform.system() == "Windows":
+            popen_kwargs["creationflags"] = CREATE_NEW_CONSOLE
+        else:
+            # "If shell is True, it is recommended to pass args as a
+            # string rather than as a sequence."
+            # https://docs.python.org/3/library/subprocess.html#subprocess.Popen
+            popen_kwargs["args"] = " ".join(popen_kwargs["args"])
+            popen_kwargs["shell"] = True
+        popen_kwargs["stdin"] = PIPE
+        popen_kwargs["stderr"] = PIPE
+        popen_kwargs["universal_newlines"] = True
+        subp = Popen(**popen_kwargs)
+        outs, errs = subp.communicate()
+        return errs
 
     def quit(self):
         """Stop working."""

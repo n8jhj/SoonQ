@@ -87,14 +87,18 @@ class BaseTask(abc.ABC):
             self.task_id = None
         return item
 
+    def slate(self, args, kwargs):
+        """Add this task to the work table with the given arguments and
+        keyword arguments.
+        """
+        self.broker.add_work(self, "running", args, kwargs)
+
     def set_status(self, status):
         """Set status of the BaseTask instance."""
         if status not in self._status_options:
             raise ValueError(f"Task status {status!r} not recognized.")
         self.status = status
-        if status == "running":
-            self.broker.add_work(self, status)
-        elif status == "complete":
+        if status == "complete":
             self.broker.update_status(self, status)
             self.broker.remove_work(self)
 
