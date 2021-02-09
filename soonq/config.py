@@ -14,6 +14,7 @@ DB_PATH = here.parent / "instance" / "queue.sqlite"
 # In order to do so, the database must be re-initialized.
 QUEUE_TABLENAME = "queue"
 WORK_TABLENAME = "work"
+WORKER_TABLENAME = "worker"
 SCHEMA = ODict(
     [
         (
@@ -36,9 +37,18 @@ SCHEMA = ODict(
                 status="TEXT",
                 args="BLOB",
                 kwargs="BLOB",
-                exc_type="BLOB",
-                exc_value="BLOB",
-                exc_traceback="BLOB",
+                err="TEXT",
+            ),
+        ),
+        (
+            WORKER_TABLENAME,
+            ODict(
+                worker_id="TEXT PRIMARY KEY NOT NULL",
+                queue_name="TEXT",
+                started="TIMESTAMP NOT NULL",
+                status="INTEGER NOT NULL",
+                task_id="TEXT",
+                directive="INTEGER NOT NULL",
             ),
         ),
     ]

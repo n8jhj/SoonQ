@@ -148,23 +148,16 @@ class Broker:
             )
         con.close()
 
-    def update_exc_info(self, item, type_, value, traceback):
+    def update_exc_info(self, item, traceback):
         """Update exception info for the given item."""
         con = sqlite3.connect(str(DB_PATH))
-        # Serialize objects to be stored as BLOB.
-        ptype = pickle.dumps(type_, protocol=pickle.HIGHEST_PROTOCOL)
-        pvalue = pickle.dumps(value, protocol=pickle.HIGHEST_PROTOCOL)
-        ptraceback = pickle.dumps(traceback, protocol=pickle.HIGHEST_PROTOCOL)
         with con:
             con.execute(
                 f"""
                 UPDATE {WORK_TABLENAME}
-                SET
-                    exc_type = ?,
-                    exc_value = ?,
-                    exc_traceback = ?
+                SET err = ?
                 WHERE task_id = ?
                 """,
-                (ptype, pvalue, ptraceback, item.task_id),
+                (traceback, item.task_id),
             )
         con.close()

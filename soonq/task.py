@@ -102,9 +102,9 @@ class BaseTask(abc.ABC):
             self.broker.update_status(self, status)
             self.broker.remove_work(self)
 
-    def record_exc(self, type_, value, traceback):
+    def record_exc(self, tb_text):
         """Record the given traceback information."""
-        self.broker.update_exc_info(self, type_, value, traceback)
+        self.broker.update_exc_info(self, tb_text)
 
     def __repr__(self):
         return f"<{self.__class__.__name__}(status={self.status})>"

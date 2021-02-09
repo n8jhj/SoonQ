@@ -6,9 +6,10 @@ import click
 from .commands import (
     clear_queue,
     task_items,
+    stop_all_workers,
 )
 from ..utils import get_taskclass
-from ..worker import Worker
+from ..worker import start_worker_process, Worker
 
 
 @click.group()
@@ -66,7 +67,17 @@ def worker(queue_name):
 @click.argument("queue_name")
 def run(queue_name):
     """Run a single task from the named queue."""
-    task_cls = get_taskclass(queue_name)
-    inst = task_cls()
-    worker = Worker(inst)
-    worker.start()
+    start_worker_process(queue_name)
+
+
+@soonq.command()
+@click.argument("queue_name")
+@click.option(
+    "-t",
+    "--terminate",
+    is_flag=True,
+    help="Whether to immediately terminate the currently running task.",
+)
+def stop(queue_name, terminate):
+    """Stop all Workers on the named task."""
+    stop_all_workers(queue_name, terminate)

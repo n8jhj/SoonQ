@@ -10,6 +10,7 @@ clear_work - Clear the table of work.
 task_items - Info about items in the queue.
 work_items - Info about items in the table of work.
 run_work - Run a given BaseTask instance.
+stop_all_workers - Stop all Workers working on a given queue.
 """
 
 import pickle
@@ -17,8 +18,11 @@ import sqlite3
 import sys
 import traceback
 
-from soonq.config import DB_PATH, QUEUE_TABLENAME, WORK_TABLENAME
+from soonq.config import (
+    DB_PATH, QUEUE_TABLENAME, WORK_TABLENAME, WORKER_TABLENAME,
+)
 from soonq.utils import echo, get_taskclass
+from soonq.worker import Worker
 
 
 # TODO: Dynamically create QueueItem and WorkItem classes based on
@@ -64,17 +68,17 @@ class WorkItem:
         queue_name,
         started,
         status,
-        exc_type,
-        exc_value,
-        exc_traceback,
+        args,
+        kwargs,
+        err,
     ):
         self.task_id = task_id
         self.queue_name = queue_name
         self.started = started
         self.status = status
-        self.exc_type = pickle.loads(exc_type)
-        self.exc_value = pickle.loads(exc_value)
-        self.exc_traceback = "".join(pickle.loads(exc_traceback).format())
+        self.args = args
+        self.kwargs = kwargs
+        self.err = err
 
     @classmethod
     def from_tuple(cls, tuple_):
@@ -91,12 +95,12 @@ class WorkItem:
                 self.started,
                 "status",
                 self.status,
-                "exc_type",
-                self.exc_type,
-                "exc_value",
-                self.exc_value,
-                "exc_traceback",
-                "...",
+                "args",
+                self.args,
+                "kwargs",
+                self.kwargs,
+                "err",
+                "..." if self.err else "''",
             )
         )
 
@@ -171,9 +175,7 @@ def work_items(max_entries=None):
                 status,
                 args,
                 kwargs,
-                exc_type,
-                exc_value,
-                exc_traceback
+                err
             FROM {WORK_TABLENAME}
             ORDER BY started ASC
             """
@@ -185,8 +187,8 @@ def work_items(max_entries=None):
     con.close()
     return items
 
-def remove_work(self, item):
-    """Remove the given item from the work table."""
+def remove_work(self, task):
+    """Remove the given task from the work table."""
     con = sqlite3.connect(str(DB_PATH))
     with con:
         con.execute(
@@ -194,7 +196,7 @@ def remove_work(self, item):
             DELETE FROM {WORK_TABLENAME}
             WHERE task_id = ?
             """,
-            (item.task_id,),
+            (task.task_id,),
         )
     con.close()
 
@@ -213,36 +215,44 @@ def run_work(task_clsname, task_id):
                 status,
                 args,
                 kwargs,
-                exc_type,
-                exc_value,
-                exc_traceback
+                err
             FROM {WORK_TABLENAME}
             WHERE task_id = ?
             """,
             (task_id,),
         )
-        (
-            task_id,
-            queue_name,
-            started,
-            status,
-            task_args,
-            task_kwargs,
-            exc_type,
-            exc_value,
-            exc_traceback,
-        ) = c.fetchone()
-        # _, _, _, _, task_args, task_kwargs, _, _, _ = c.fetchone()
+        _, _, _, _, task_args, task_kwargs, _ = c.fetchone()
     con.close()
     # Run task.
     task_args = pickle.loads(task_args)
     task_kwargs = pickle.loads(task_kwargs)
     exc_info = None
     task = get_taskclass(task_clsname)()
-    try:
-        task.run(*task_args, **task_kwargs)
-    except:
-        # Any Exceptions will be saved.
-        exc_info = list(sys.exc_info())
-        exc_info[-1] = traceback.extract_tb(exc_info[-1])
+    task.run(*task_args, **task_kwargs)
     return exc_info
+
+
+def stop_all_workers(queue_name, terminate=False):
+    """Stop all Workers working on the named queue.
+
+    Positional arguments:
+    queue_name - (str) Queue name to stop work on.
+
+    Keyword arguments:
+    terminate - (bool) (Default: False) Whether to immediately terminate
+        the currently running task.
+    """
+    con = sqlite3.connect(str(DB_PATH))
+    with con:
+        con.execute(
+            f"""
+            UPDATE {WORKER_TABLENAME}
+            SET directive = ?
+            WHERE queue_name = ?
+            """,
+            (
+                Worker.DRV_TERM if terminate else Worker.DRV_QUIT,
+                queue_name,
+            ),
+        )
+    con.close()
