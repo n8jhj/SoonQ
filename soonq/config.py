@@ -53,3 +53,8 @@ SCHEMA = ODict(
         ),
     ]
 )
+
+# Tabulate formatting.
+TABULATE_FORMATTING = dict(
+    tablefmt="pretty",
+)

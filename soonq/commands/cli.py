@@ -14,6 +14,7 @@ import click
 
 from .commands import (
     clear_queue,
+    tabulate_task_items,
     task_items,
     stop_all_workers,
 )
@@ -44,12 +45,7 @@ def clear():
 def view(all_entries):
     """View tasks in the queue."""
     max_entries = None if all_entries else 5
-    any_items = False
-    for queue_item in task_items(max_entries=max_entries):
-        any_items = True
-        click.echo(queue_item)
-    if not any_items:
-        click.echo("Queue empty.")
+    click.echo(tabulate_task_items(max_entries=max_entries))
 
 
 @soonq.command()

@@ -3,6 +3,7 @@ import click
 from .commands import (
     clear_queue,
     clear_work,
+    tabulate_task_items,
     task_items,
     work_items,
 )

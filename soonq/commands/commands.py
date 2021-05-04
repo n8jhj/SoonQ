@@ -8,6 +8,7 @@ Functions:
 clear_queue - Clear the queue.
 clear_work - Clear the table of work.
 task_items - Info about items in the queue.
+tabulate_task_items - Tabulate info about items in the queue.
 work_items - Info about items in the table of work.
 run_work - Run a given BaseTask instance.
 stop_all_workers - Stop all Workers working on a given queue.
@@ -21,7 +22,7 @@ import traceback
 from soonq.config import (
     DB_PATH, QUEUE_TABLENAME, WORK_TABLENAME, WORKER_TABLENAME,
 )
-from soonq.utils import echo, get_taskclass
+from soonq.utils import echo, get_taskclass, tabulate_data
 from soonq.worker import Worker
 
 
@@ -43,6 +44,13 @@ class QueueItem:
     @classmethod
     def from_tuple(cls, tuple_):
         return cls(*tuple_)
+
+    @classmethod
+    def fields(cls):
+        """A list of fields."""
+        return [
+            "task_id", "queue_name", "position", "published", "args", "kwargs"
+        ]
 
     def __repr__(self):
         return "QueueItem({}={}, {}={}, {}={}, {}={}, {}={}, {}={})".format(
@@ -83,6 +91,19 @@ class WorkItem:
     @classmethod
     def from_tuple(cls, tuple_):
         return cls(*tuple_)
+
+    @classmethod
+    def fields(cls):
+        """A list of fields."""
+        return [
+            "task_id",
+            "queue_name",
+            "started",
+            "status",
+            "args",
+            "kwargs",
+            "err",
+        ]
 
     def __repr__(self):
         return (
@@ -154,6 +175,17 @@ def task_items(max_entries=None):
         items = map(QueueItem.from_tuple, c.fetchall())
     con.close()
     return items
+
+
+def tabulate_task_items(*args, **kwargs):
+    """Return a string containing tabulated data about task items."""
+    tasks = task_items(*args, **kwargs)
+    headers = QueueItem.fields()
+    data = [
+        [getattr(task, h) for h in headers]
+        for task in tasks
+    ]
+    return tabulate_data(data, headers=headers)
 
 
 def work_items(max_entries=None):

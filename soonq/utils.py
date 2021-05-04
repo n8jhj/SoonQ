@@ -3,6 +3,7 @@
 Functions:
 echo - Wrapper for click.echo.
 get_taskclass - Get subclass of BaseTask by name.
+tabulate_data - Tabulate data in a nice text table.
 """
 
 import functools
@@ -10,8 +11,10 @@ import inspect
 import pathlib
 
 import click
+from tabulate import tabulate
 
 import soonq as sq
+from .config import TABULATE_FORMATTING
 
 
 @functools.wraps(click.echo)
@@ -36,3 +39,8 @@ def get_taskclass(name):
     except KeyError:
         raise ValueError(f"Unrecognized task class name {name!r}")
     return task_cls
+
+
+def tabulate_data(data, headers=None):
+    """Tabulate data in a nice text table."""
+    return tabulate(data, headers=headers, **TABULATE_FORMATTING)
