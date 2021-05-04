@@ -1,4 +1,13 @@
 """Command line interface.
+
+Command groups:
+soonq
+    clear
+    view
+    enq
+    worker
+    run
+    stop
 """
 
 import click
@@ -46,7 +55,7 @@ def view(all_entries):
 @soonq.command()
 @click.argument("queue_name")
 @click.argument("args", nargs=-1)
-def enqueue(queue_name, args):
+def enq(queue_name, args):
     """Enqueue a single task in the named queue."""
     task_cls = get_taskclass(queue_name)
     inst = task_cls()
