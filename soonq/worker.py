@@ -84,11 +84,11 @@ class Worker:
 
     @property
     def waiting(self):
-        return self._get_dbinfo("status")
+        return self._get_dbinfo("status") == self.STA_WAIT
 
     @waiting.setter
     def waiting(self, value):
-        return self._set_dbinfo("status", value)
+        return self._set_dbinfo("status", value == self.STA_WAIT)
 
     @property
     def directive(self):
