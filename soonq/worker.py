@@ -47,6 +47,8 @@ class Worker:
         self.task = task
         self.comm_timeout = comm_timeout
         self.worker_id = str(uuid.uuid4())
+        # Until cleanup happens, the instance will remain alive.
+        self.alive = True
         self.task_subp = None
         self._register()
 
@@ -124,7 +126,7 @@ class Worker:
 
     def start(self):
         """Begin working on the assigned type of task."""
-        while self.directive == self.DRV_WORK:
+        while self.alive and self.directive == self.DRV_WORK:
             try:
                 # Read database.
                 dequeued_item = self.task.dequeue()
@@ -152,7 +154,7 @@ class Worker:
                 self.terminate()
                 break
         else:
-            if self.directive == self.DRV_QUIT:
+            if self.alive and self.directive == self.DRV_QUIT:
                 self.quit()
 
     def subprocess_run(self, task_id):
@@ -206,6 +208,7 @@ class Worker:
                 (self.worker_id,),
             )
         con.close()
+        self.alive = False
 
     def quit(self):
         """Stop working."""
