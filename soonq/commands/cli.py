@@ -18,7 +18,7 @@ from .commands import (
     task_items,
     stop_all_workers,
 )
-from ..utils import get_taskclass
+from ..task import BaseTask
 from ..worker import start_worker_process, Worker
 
 
@@ -53,7 +53,7 @@ def view(all_entries):
 @click.argument("args", nargs=-1)
 def enq(queue_name, args):
     """Enqueue a single task in the named queue."""
-    task_cls = get_taskclass(queue_name)
+    task_cls = BaseTask.subclass(queue_name)
     inst = task_cls()
     inst.delay(*args)
 
@@ -62,7 +62,7 @@ def enq(queue_name, args):
 @click.argument("queue_name")
 def worker(queue_name):
     """Start a worker on the named queue in the current process."""
-    task_cls = get_taskclass(queue_name)
+    task_cls = BaseTask.subclass(queue_name)
     inst = task_cls()
     worker = Worker(inst)
     worker.start()

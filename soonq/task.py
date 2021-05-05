@@ -40,6 +40,19 @@ class BaseTask(abc.ABC):
         "error",
         "complete",
     )
+    # Dictionary of subclasses.  Maps names to types.
+    _subclasses = {}
+
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        cls._subclasses[cls.__name__] = cls
+
+    @classmethod
+    def subclass(cls, name):
+        subcls = cls._subclasses.get(name)
+        if not subcls:
+            raise ValueError(f"Unregistered subclass {name!r}")
+        return subcls
 
     def __init__(self):
         self.broker = Broker()
