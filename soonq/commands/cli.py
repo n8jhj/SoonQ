@@ -29,6 +29,7 @@ def soonq():
 
 
 @soonq.command()
+@click.confirmation_option(prompt="Clear the entire queue?")
 def clear():
     """Clear the queue."""
     clear_queue()
