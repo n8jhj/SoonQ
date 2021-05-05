@@ -3,7 +3,6 @@ running a single task.
 """
 
 import sys
-import time
 
 from soonq.commands.commands import run_work
 

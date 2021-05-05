@@ -71,7 +71,7 @@ def worker(queue_name):
 @soonq.command()
 @click.argument("queue_name")
 def run(queue_name):
-    """Run a single task from the named queue."""
+    """Spawn a worker on the named queue."""
     start_worker_process(queue_name)
 
 
