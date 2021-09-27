@@ -11,6 +11,7 @@ import datetime as dt
 import platform
 import sqlite3
 from subprocess import Popen, TimeoutExpired, CREATE_NEW_CONSOLE, PIPE
+import sys
 import uuid
 
 from .utils import echo
@@ -160,7 +161,10 @@ class Worker:
     def subprocess_run(self, task_id):
         popen_kwargs = dict(
             args=[
-                "python",
+                # To use the same interpreter as the current process, use
+                # sys.executable.
+                # https://stackoverflow.com/a/27123973/7232335
+                sys.executable,
                 "soonq/commands/runtask.py",
                 self.task.task_name,
                 str(task_id),
