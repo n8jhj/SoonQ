@@ -1,4 +1,8 @@
-"""Useful commands.
+"""Contains commands that can be used within other Python modules. This is particularly
+useful for initializing subprocesses, since only a Python interpreter executable is
+required, rather than a particular command line implementation. (For example, think of
+Poetry, which requires prefixing commands with "poetry run" to have access to the
+virtual environment.)
 
 Classes:
 QueueItem
@@ -11,13 +15,12 @@ task_items - Info about items in the queue.
 tabulate_task_items - Tabulate info about items in the queue.
 work_items - Info about items in the table of work.
 run_work - Run a given BaseTask instance.
+start_worker - Start a Worker in the current process.
 stop_all_workers - Stop all Workers working on a given queue.
 """
 
 import pickle
 import sqlite3
-import sys
-import traceback
 
 from soonq.config import (
     DB_PATH, QUEUE_TABLENAME, WORK_TABLENAME, WORKER_TABLENAME,
@@ -262,6 +265,14 @@ def run_work(task_clsname, task_id):
     task = get_taskclass(task_clsname)()
     task.run(*task_args, **task_kwargs)
     return exc_info
+
+
+def start_worker(queue_name):
+    """Start a worker on the named queue in the current process."""
+    task_cls = get_taskclass(queue_name)
+    inst = task_cls()
+    worker = Worker(inst)
+    worker.start()
 
 
 def stop_all_workers(queue_name, terminate=False):

@@ -4,12 +4,12 @@ running a single task.
 
 import sys
 
-from soonq.commands.commands import run_work
+from .commands import run_work
 
 
 try:
     task_clsname, task_id = sys.argv[1:]
 except ValueError:
-    raise RuntimeError("Necessary arguments not passed to subprocess.")
+    raise RuntimeError(f"Necessary arguments not passed to {__file__}")
 
 run_work(task_clsname, task_id)

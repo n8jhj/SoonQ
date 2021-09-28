@@ -15,7 +15,7 @@ import click
 from .commands import (
     clear_queue,
     tabulate_task_items,
-    task_items,
+    start_worker,
     stop_all_workers,
 )
 from ..utils import get_taskclass
@@ -63,10 +63,7 @@ def enq(queue_name, args):
 @click.argument("queue_name")
 def worker(queue_name):
     """Start a worker on the named queue in the current process."""
-    task_cls = get_taskclass(queue_name)
-    inst = task_cls()
-    worker = Worker(inst)
-    worker.start()
+    start_worker(queue_name)
 
 
 @soonq.command()

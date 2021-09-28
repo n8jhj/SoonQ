@@ -165,7 +165,8 @@ class Worker:
                 # sys.executable.
                 # https://stackoverflow.com/a/27123973/7232335
                 sys.executable,
-                "soonq/commands/runtask.py",
+                "-m",
+                "soonq.commands.runtask",
                 self.task.task_name,
                 str(task_id),
             ],
@@ -230,7 +231,7 @@ class Worker:
 def start_worker_process(queue_name):
     """Start a process with a Worker on the queue of the given name."""
     popen_kwargs = dict(
-        args=["soonq", "worker", queue_name],
+        args=[sys.executable, "-m", "soonq.commands.start_worker", queue_name],
     )
     if platform.system() == "Windows":
         popen_kwargs["creationflags"] = CREATE_NEW_CONSOLE
