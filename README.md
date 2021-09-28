@@ -4,7 +4,7 @@ A subprocess-based task queue.
 
 ## Introduction
 
-SoonQ implements a simple FIFO queue using SQLite. It was created primarily to give a user direct control over running long simulations.
+SoonQ implements a simple first-in-first-out (FIFO) queue using SQLite. It was created primarily to give a user direct control over running long simulations.
 
 ## Installation
 
@@ -16,20 +16,20 @@ Users must create their own subclass of `soonq.BaseTask`. Subclasses must define
 
 ## Running the examples
 
-Example files are included in the examples directory. Clone SoonQ in your desired location...
+Example files are included in the examples directory. Clone SoonQ in your desired location.
 
 `C:\desired\location>git clone https://github.com/n8jhj/SoonQ.git`
 
-...and then navigate into the `SoonQ` directory and install it. Be careful to include the dot!
+Optionally create a virtual environment within this directory. Then navigate into the `SoonQ` directory and install it, being careful to include the dot.
 
 `pip install .`
 
-Now run the same command a couple times in a terminal to enqueue two `TimerTask`s:
+Now run the same command a couple times in a terminal to enqueue two `TimerTask`s (the source code is in the examples directory):
 
-    C:\...\SoonQ>soonq enq TimerTask
+    C:\...\SoonQ>soonq enq TimerTask 3 3
     Queued task: 913d56e9-a609-4b84-b937-479a94716527
 
-    C:\...\SoonQ>soonq enq TimerTask
+    C:\...\SoonQ>soonq enq TimerTask 3 3
     Queued task: da952424-98d9-42e1-8851-91a30924b94b
 
     C:\...\SoonQ>
