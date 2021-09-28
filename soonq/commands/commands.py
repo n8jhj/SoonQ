@@ -19,12 +19,11 @@ import sqlite3
 import sys
 import traceback
 
-from ..config import (
+from soonq.config import (
     DB_PATH, QUEUE_TABLENAME, WORK_TABLENAME, WORKER_TABLENAME,
 )
-from ..task import BaseTask
-from ..utils import echo, tabulate_data
-from ..worker import Worker
+from soonq.utils import echo, get_taskclass, tabulate_data
+from soonq.worker import Worker
 
 
 # TODO: Dynamically create QueueItem and WorkItem classes based on
@@ -260,7 +259,7 @@ def run_work(task_clsname, task_id):
     task_args = pickle.loads(task_args)
     task_kwargs = pickle.loads(task_kwargs)
     exc_info = None
-    task = BaseTask.subclass(task_clsname)()
+    task = get_taskclass(task_clsname)()
     task.run(*task_args, **task_kwargs)
     return exc_info
 
