@@ -166,7 +166,7 @@ class Worker:
                 # https://stackoverflow.com/a/27123973/7232335
                 sys.executable,
                 "-m",
-                "soonq.commands.runtask",
+                "soonq.commands.run_task",
                 self.task.task_name,
                 str(task_id),
             ],
