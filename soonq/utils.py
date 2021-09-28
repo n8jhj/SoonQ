@@ -30,9 +30,7 @@ def get_taskclass(name):
     # TODO: Remove this.  Importing here now to avoid circular import.
     import examples
 
-    istasksubclass = lambda x: inspect.isclass(x) and issubclass(
-        x, sq.BaseTask
-    )
+    istasksubclass = lambda x: inspect.isclass(x) and issubclass(x, sq.BaseTask)
     task_classes = dict(inspect.getmembers(examples, istasksubclass))
     try:
         task_cls = task_classes[name]

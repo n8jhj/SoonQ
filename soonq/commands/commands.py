@@ -23,7 +23,10 @@ import pickle
 import sqlite3
 
 from soonq.config import (
-    DB_PATH, QUEUE_TABLENAME, WORK_TABLENAME, WORKER_TABLENAME,
+    DB_PATH,
+    QUEUE_TABLENAME,
+    WORK_TABLENAME,
+    WORKER_TABLENAME,
 )
 from soonq.utils import echo, get_taskclass, tabulate_data
 from soonq.worker import Worker
@@ -51,9 +54,7 @@ class QueueItem:
     @classmethod
     def fields(cls):
         """A list of fields."""
-        return [
-            "task_id", "queue_name", "position", "published", "args", "kwargs"
-        ]
+        return ["task_id", "queue_name", "position", "published", "args", "kwargs"]
 
     def __repr__(self):
         return "QueueItem({}={}, {}={}, {}={}, {}={}, {}={}, {}={})".format(
@@ -109,23 +110,21 @@ class WorkItem:
         ]
 
     def __repr__(self):
-        return (
-            "WorkItem({}={}, {}={}, {}={}, {}={}, {}={}, {}={}, {}={})".format(
-                "task_id",
-                self.task_id,
-                "queue_name",
-                self.queue_name,
-                "started",
-                self.started,
-                "status",
-                self.status,
-                "args",
-                self.args,
-                "kwargs",
-                self.kwargs,
-                "err",
-                "..." if self.err else "''",
-            )
+        return "WorkItem({}={}, {}={}, {}={}, {}={}, {}={}, {}={}, {}={})".format(
+            "task_id",
+            self.task_id,
+            "queue_name",
+            self.queue_name,
+            "started",
+            self.started,
+            "status",
+            self.status,
+            "args",
+            self.args,
+            "kwargs",
+            self.kwargs,
+            "err",
+            "..." if self.err else "''",
         )
 
 
@@ -184,10 +183,7 @@ def tabulate_task_items(*args, **kwargs):
     """Return a string containing tabulated data about task items."""
     tasks = task_items(*args, **kwargs)
     headers = QueueItem.fields()
-    data = [
-        [getattr(task, h) for h in headers]
-        for task in tasks
-    ]
+    data = [[getattr(task, h) for h in headers] for task in tasks]
     return tabulate_data(data, headers=headers)
 
 
@@ -221,6 +217,7 @@ def work_items(max_entries=None):
         items = map(WorkItem.from_tuple, c.fetchall())
     con.close()
     return items
+
 
 def remove_work(self, task):
     """Remove the given task from the work table."""

@@ -74,9 +74,7 @@ class BaseTask(abc.ABC):
             self.set_status("enqueued")
             echo(f"Queued task: {self.task_id}")
         except Exception:
-            raise RuntimeError(
-                f"Unable to publish task {self.task_id} to the broker."
-            )
+            raise RuntimeError(f"Unable to publish task {self.task_id} to the broker.")
 
     def dequeue(self):
         """Dequeue one task of this type."""

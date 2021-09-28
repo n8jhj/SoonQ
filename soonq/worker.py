@@ -188,9 +188,7 @@ class Worker:
         while True:
             # Poll for completion.
             try:
-                outs, errs = self.task_subp.communicate(
-                    timeout=self.comm_timeout
-                )
+                outs, errs = self.task_subp.communicate(timeout=self.comm_timeout)
                 break
             except TimeoutExpired:
                 pass
