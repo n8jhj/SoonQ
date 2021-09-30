@@ -27,3 +27,9 @@ def test_queueitem_init(queue_item):
     assert isinstance(queue_item.published, dt.datetime) and queue_item.published == dt.datetime(2021, 9, 29, 11, 13, 57, 223584)
     assert isinstance(queue_item.args, tuple) and queue_item.args == ()
     assert isinstance(queue_item.kwargs, dict) and queue_item.kwargs == {}
+
+
+def test_queueitem_list_item_info(queue_item):
+    assert queue_item.list_item_info(truncate=True) == [
+        "994a92b2-", "CustomTask", "3", "2021-09-29 11:13:57", "()", "{}",
+    ]
