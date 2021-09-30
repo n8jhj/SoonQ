@@ -26,9 +26,13 @@ tabulate = "^0.8.9"
 
 [tool.poetry.dev-dependencies]
 black = "^21.9b0"
+pytest = "^6.2.5"
 
 [tool.poetry.scripts]
 soonq = "soonq.commands.cli:soonq"
+
+[tool.pytest.ini_options]
+testpaths = "test"
 
 [build-system]
 requires = ["poetry-core"]

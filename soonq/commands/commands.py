@@ -19,8 +19,11 @@ start_worker - Start a Worker in the current process.
 stop_all_workers - Stop all Workers working on a given queue.
 """
 
+import datetime as dt
 import pickle
 import sqlite3
+from typing import Union
+import uuid
 
 from soonq.config import (
     DB_PATH,
@@ -39,13 +42,31 @@ from soonq.worker import Worker
 
 
 class QueueItem:
-    def __init__(self, task_id, queue_name, position, published, args, kwargs):
-        self.task_id = task_id
+    def __init__(
+        self,
+        task_id: str,
+        queue_name: str,
+        position: str,
+        published: str,
+        args: bytes,
+        kwargs: bytes,
+    ):
+        self.task_id = uuid.UUID(task_id)
         self.queue_name = queue_name
-        self.position = position
-        self.published = published
+        self.position = int(position)
+        self.published = self._parse_datetime_str(published)
         self.args = pickle.loads(args)
         self.kwargs = pickle.loads(kwargs)
+
+    @classmethod
+    def _parse_datetime_str(cls, dt_str):
+        date, time = dt_str.split(" ")
+        year, mo, da = date.split("-")
+        hr, min_, submin = time.split(":")
+        sec, usec = submin.split(".")
+        return dt.datetime(
+            int(year), int(mo), int(da), int(hr), int(min_), int(sec), int(usec)
+        )
 
     @classmethod
     def from_tuple(cls, tuple_):
@@ -71,6 +92,30 @@ class QueueItem:
             "kwargs",
             self.kwargs,
         )
+
+    def list_item_info(self, truncate=True):
+        """Returns a list of strings corresponding to the attributes of this QueueItem
+        instance. If `truncate=True` (the default), the `task_id` and `published` time
+        will be shortened.
+        """
+        info = []
+        task_id_field = str(self.task_id)
+        if truncate:
+            task_id_field = task_id_field.split("-")[0] + "-"
+            info.append(task_id_field)
+        else:
+            info.append(task_id_field)
+        info.append(self.queue_name)
+        info.append(str(self.position))
+        published_field = str(self.published)
+        if truncate:
+            # Remove microseconds.
+            info.append(published_field.split(".")[0])
+        else:
+            info.append(published_field)
+        info.append(str(self.args))
+        info.append(str(self.kwargs))
+        return info
 
 
 class WorkItem:
@@ -179,12 +224,11 @@ def task_items(max_entries=None):
     return items
 
 
-def tabulate_task_items(*args, **kwargs):
+def tabulate_task_items(*args, truncate=True, **kwargs):
     """Return a string containing tabulated data about task items."""
     tasks = task_items(*args, **kwargs)
-    headers = QueueItem.fields()
-    data = [[getattr(task, h) for h in headers] for task in tasks]
-    return tabulate_data(data, headers=headers)
+    data = [task.list_item_info(truncate=truncate) for task in tasks]
+    return tabulate_data(data, headers=QueueItem.fields())
 
 
 def work_items(max_entries=None):

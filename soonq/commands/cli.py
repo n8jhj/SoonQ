@@ -43,10 +43,11 @@ def clear():
     show_default=True,
     help="Whether to show all entries.",
 )
-def view(all_entries):
+@click.option("-v", "--verbose", is_flag=True, help="Show more information in output.")
+def view(all_entries, verbose):
     """View tasks in the queue."""
     max_entries = None if all_entries else 5
-    click.echo(tabulate_task_items(max_entries=max_entries))
+    click.echo(tabulate_task_items(max_entries=max_entries, truncate=not verbose))
 
 
 @soonq.command()
