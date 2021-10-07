@@ -28,6 +28,7 @@ tabulate = "^0.8.9"
 black = "^21.9b0"
 pytest = "^6.2.5"
 pytest-cov = "^3.0.0"
+vulture = "^2.3"
 
 [tool.poetry.scripts]
 soonq = "soonq.commands.cli:soonq"
