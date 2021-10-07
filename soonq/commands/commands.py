@@ -22,7 +22,6 @@ stop_all_workers - Stop all Workers working on a given queue.
 import datetime as dt
 import pickle
 import sqlite3
-from typing import Union
 import uuid
 
 from soonq.config import (

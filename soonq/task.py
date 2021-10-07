@@ -5,7 +5,6 @@ BaseTask - Base task class.
 """
 
 import abc
-import pickle
 import uuid
 
 from .broker import Broker
