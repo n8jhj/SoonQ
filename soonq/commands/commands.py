@@ -61,10 +61,10 @@ class QueueItem:
     def _parse_datetime_str(cls, dt_str):
         date, time = dt_str.split(" ")
         year, mo, da = date.split("-")
-        hr, min_, submin = time.split(":")
-        sec, usec = submin.split(".")
+        hr, min_, sub_min = time.split(":")
+        sec, u_sec = sub_min.split(".")
         return dt.datetime(
-            int(year), int(mo), int(da), int(hr), int(min_), int(sec), int(usec)
+            int(year), int(mo), int(da), int(hr), int(min_), int(sec), int(u_sec)
         )
 
     @classmethod
@@ -276,7 +276,7 @@ def remove_work(self, task):
     con.close()
 
 
-def run_work(task_clsname, task_id):
+def run_work(task_class_name, task_id):
     """Run the task in the work table with the given ID."""
     # Get task from work table.
     con = sqlite3.connect(str(DB_PATH))
@@ -302,7 +302,7 @@ def run_work(task_clsname, task_id):
     task_args = pickle.loads(task_args)
     task_kwargs = pickle.loads(task_kwargs)
     exc_info = None
-    task = get_task_class(task_clsname)()
+    task = get_task_class(task_class_name)()
     task.run(*task_args, **task_kwargs)
     return exc_info
 
