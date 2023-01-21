@@ -2,7 +2,7 @@
 """
 
 import pathlib
-from collections import OrderedDict as ODict
+from collections import OrderedDict
 
 # Database location.
 here = pathlib.Path(__file__)
@@ -14,11 +14,11 @@ DB_PATH = here.parent / "instance" / "queue.sqlite"
 QUEUE_TABLENAME = "queue"
 WORK_TABLENAME = "work"
 WORKER_TABLENAME = "worker"
-SCHEMA = ODict(
+SCHEMA = OrderedDict(
     [
         (
             QUEUE_TABLENAME,
-            ODict(
+            OrderedDict(
                 task_id="TEXT PRIMARY KEY NOT NULL",
                 queue_name="TEXT",
                 position="INTEGER UNIQUE NOT NULL",
@@ -29,7 +29,7 @@ SCHEMA = ODict(
         ),
         (
             WORK_TABLENAME,
-            ODict(
+            OrderedDict(
                 task_id="TEXT PRIMARY KEY NOT NULL",
                 queue_name="TEXT",
                 started="TIMESTAMP NOT NULL",
@@ -41,7 +41,7 @@ SCHEMA = ODict(
         ),
         (
             WORKER_TABLENAME,
-            ODict(
+            OrderedDict(
                 worker_id="TEXT PRIMARY KEY NOT NULL",
                 queue_name="TEXT",
                 started="TIMESTAMP NOT NULL",
