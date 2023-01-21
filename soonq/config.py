@@ -55,5 +55,5 @@ SCHEMA = OrderedDict(
 
 # Tabulate formatting.
 TABULATE_FORMATTING = dict(
-    tablefmt="pretty",
+    tablefmt="pretty",  # cspell:ignore tablefmt
 )
