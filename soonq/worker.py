@@ -160,31 +160,35 @@ class Worker:
                 self.quit()
 
     def subprocess_run(self, task_id):
-        popen_kwargs = dict(
-            args=[
-                # To use the same interpreter as the current process, use
-                # sys.executable.
-                # https://stackoverflow.com/a/27123973/7232335
-                sys.executable,
-                "-m",
-                "soonq.commands.run_task",
-                self.task.task_name,
-                str(task_id),
-            ],
-        )
+        popen_creationflags = 0
+        popen_args = [
+            # To use the same interpreter as the current process, use
+            # sys.executable.
+            # https://stackoverflow.com/a/27123973/7232335
+            sys.executable,
+            "-m",
+            "soonq.commands.run_task",
+            self.task.task_name,
+            str(task_id),
+        ]
+        popen_shell = False
         if platform.system() == "Windows":
-            popen_kwargs["creationflags"] = subprocess.CREATE_NEW_CONSOLE
+            popen_creationflags = subprocess.CREATE_NEW_CONSOLE  # type: ignore # CREATE_NEW_CONSOLE is only available on Windows.
         else:
             # "If shell is True, it is recommended to pass args as a
             # string rather than as a sequence."
             # https://docs.python.org/3/library/subprocess.html#subprocess.Popen
-            popen_kwargs["args"] = " ".join(popen_kwargs["args"])
-            popen_kwargs["shell"] = True
-        popen_kwargs["stdin"] = PIPE
-        popen_kwargs["stderr"] = PIPE
-        popen_kwargs["universal_newlines"] = True
+            popen_args = " ".join(popen_args)
+            popen_shell = True
         # Poll for task completion and further directives.
-        self.task_subprocess = Popen(**popen_kwargs)
+        self.task_subprocess = Popen(
+            args=popen_args,
+            shell=popen_shell,
+            stdin=PIPE,
+            stderr=PIPE,
+            universal_newlines=True,
+            creationflags=popen_creationflags,
+        )
         errs = None
         while True:
             # Poll for completion.
@@ -229,17 +233,22 @@ class Worker:
 
 def start_worker_process(queue_name):
     """Start a process with a Worker on the queue of the given name."""
-    popen_kwargs = dict(
-        args=[sys.executable, "-m", "soonq.commands.start_worker", queue_name],
-    )
+    popen_creationflags = 0
+    popen_args = [sys.executable, "-m", "soonq.commands.start_worker", queue_name]
+    popen_shell = False
     if platform.system() == "Windows":
-        popen_kwargs["creationflags"] = subprocess.CREATE_NEW_CONSOLE
+        popen_creationflags = subprocess.CREATE_NEW_CONSOLE  # type: ignore # CREATE_NEW_CONSOLE is only available on Windows.
     else:
-        # "If shell is True, it is recommended to pass args as a
-        # string rather than as a sequence."
+        # "If shell is True, it is recommended to pass args as a string rather
+        # than as a sequence."
         # https://docs.python.org/3/library/subprocess.html#subprocess.Popen
-        popen_kwargs["args"] = " ".join(popen_kwargs["args"])
-        popen_kwargs["shell"] = True
-    popen_kwargs["universal_newlines"] = True
+        popen_args = " ".join(popen_args)
+        popen_shell = True
+    popen_universal_newlines = True
     # Poll for task completion and further directives.
-    Popen(**popen_kwargs)
+    Popen(
+        args=popen_args,
+        shell=popen_shell,
+        universal_newlines=popen_universal_newlines,
+        creationflags=popen_creationflags,
+    )
