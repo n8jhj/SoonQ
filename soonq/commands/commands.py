@@ -30,7 +30,7 @@ from soonq.config import (
     WORK_TABLENAME,
     WORKER_TABLENAME,
 )
-from soonq.utils import echo, get_taskclass, tabulate_data
+from soonq.utils import echo, get_task_class, tabulate_data
 from soonq.worker import Worker
 
 
@@ -302,14 +302,14 @@ def run_work(task_clsname, task_id):
     task_args = pickle.loads(task_args)
     task_kwargs = pickle.loads(task_kwargs)
     exc_info = None
-    task = get_taskclass(task_clsname)()
+    task = get_task_class(task_clsname)()
     task.run(*task_args, **task_kwargs)
     return exc_info
 
 
 def start_worker(queue_name):
     """Start a worker on the named queue in the current process."""
-    task_cls = get_taskclass(queue_name)
+    task_cls = get_task_class(queue_name)
     inst = task_cls()
     worker = Worker(inst)
     worker.start()

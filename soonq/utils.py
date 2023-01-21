@@ -2,13 +2,12 @@
 
 Functions:
 echo - Wrapper for click.echo.
-get_taskclass - Get subclass of BaseTask by name.
+get_task_class - Get subclass of BaseTask by name.
 tabulate_data - Tabulate data in a nice text table.
 """
 
 import functools
 import inspect
-import pathlib
 
 import click
 from tabulate import tabulate
@@ -23,7 +22,7 @@ def echo(*args, **kwargs):
     return click.echo(*args, **kwargs)
 
 
-def get_taskclass(name):
+def get_task_class(name):
     """Returns the named subclass of BaseTask. Raises a ValueError if
     the class name is not recognized.
     """
