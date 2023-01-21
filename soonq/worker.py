@@ -10,6 +10,7 @@ start_worker_process - Start a Worker on a given queue.
 import datetime as dt
 import platform
 import sqlite3
+import subprocess
 from subprocess import Popen, TimeoutExpired, PIPE
 import sys
 import uuid
@@ -50,7 +51,7 @@ class Worker:
         self.worker_id = str(uuid.uuid4())
         # Until cleanup happens, the instance will remain alive.
         self.alive = True
-        self.task_subp = None
+        self.task_subprocess = None
         self._register()
 
     def _register(self):
@@ -79,25 +80,25 @@ class Worker:
 
     @property
     def started(self):
-        return self._get_dbinfo("started")
+        return self._get_db_info("started")
 
     @started.setter
     def started(self, value):
-        return self._set_dbinfo("started", value)
+        return self._set_db_info("started", value)
 
     @property
     def waiting(self):
-        return self._get_dbinfo("status") == self.STA_WAIT
+        return self._get_db_info("status") == self.STA_WAIT
 
     @waiting.setter
     def waiting(self, value):
-        return self._set_dbinfo("status", value == self.STA_WAIT)
+        return self._set_db_info("status", value == self.STA_WAIT)
 
     @property
     def directive(self):
-        return self._get_dbinfo("directive")
+        return self._get_db_info("directive")
 
-    def _get_dbinfo(self, col):
+    def _get_db_info(self, col):
         con = sqlite3.connect(str(DB_PATH))
         with con:
             c = con.execute(
@@ -112,7 +113,7 @@ class Worker:
         con.close()
         return info
 
-    def _set_dbinfo(self, col, value):
+    def _set_db_info(self, col, value):
         con = sqlite3.connect(str(DB_PATH))
         with con:
             con.execute(
@@ -183,12 +184,12 @@ class Worker:
         popen_kwargs["stderr"] = PIPE
         popen_kwargs["universal_newlines"] = True
         # Poll for task completion and further directives.
-        self.task_subp = Popen(**popen_kwargs)
+        self.task_subprocess = Popen(**popen_kwargs)
         errs = None
         while True:
             # Poll for completion.
             try:
-                outs, errs = self.task_subp.communicate(timeout=self.comm_timeout)
+                outs, errs = self.task_subprocess.communicate(timeout=self.comm_timeout)
                 break
             except TimeoutExpired:
                 pass
@@ -196,7 +197,7 @@ class Worker:
             if self.directive == self.DRV_TERM:
                 self.terminate()
                 break
-        self.task_subp = None
+        self.task_subprocess = None
         return errs
 
     def cleanup(self):
@@ -221,8 +222,8 @@ class Worker:
     def terminate(self):
         """Terminate self and running task."""
         echo("Terminating")
-        if self.task_subp:
-            self.task_subp.terminate()
+        if self.task_subprocess:
+            self.task_subprocess.terminate()
         self.cleanup()
 
 
