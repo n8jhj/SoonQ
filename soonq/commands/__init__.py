@@ -8,7 +8,6 @@ from .commands import (
     work_items,
 )
 
-
 # Monkeypatch click BaseCommand help options.
 # Cf. https://github.com/pallets/click/issues/646#issuecomment-389969474
 

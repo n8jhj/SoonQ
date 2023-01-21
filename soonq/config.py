@@ -1,9 +1,8 @@
 """Configuration variables.
 """
 
-from collections import OrderedDict as ODict
 import pathlib
-
+from collections import OrderedDict as ODict
 
 # Database location.
 here = pathlib.Path(__file__)

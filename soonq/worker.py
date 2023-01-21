@@ -11,12 +11,12 @@ import datetime as dt
 import platform
 import sqlite3
 import subprocess
-from subprocess import Popen, TimeoutExpired, PIPE
 import sys
 import uuid
+from subprocess import PIPE, Popen, TimeoutExpired
 
-from .utils import echo
 from .config import DB_PATH, WORKER_TABLENAME
+from .utils import echo
 
 
 class Worker:

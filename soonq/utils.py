@@ -13,6 +13,7 @@ import click
 from tabulate import tabulate
 
 import soonq as sq
+
 from .config import TABULATE_FORMATTING
 
 

@@ -12,14 +12,9 @@ soonq
 
 import click
 
-from .commands import (
-    clear_queue,
-    tabulate_task_items,
-    start_worker,
-    stop_all_workers,
-)
 from ..utils import get_task_class
-from ..worker import start_worker_process, Worker
+from ..worker import start_worker_process
+from .commands import clear_queue, start_worker, stop_all_workers, tabulate_task_items
 
 
 @click.group()
