@@ -10,7 +10,7 @@ start_worker_process - Start a Worker on a given queue.
 import datetime as dt
 import platform
 import sqlite3
-from subprocess import Popen, TimeoutExpired, CREATE_NEW_CONSOLE, PIPE
+from subprocess import Popen, TimeoutExpired, PIPE
 import sys
 import uuid
 
@@ -172,7 +172,7 @@ class Worker:
             ],
         )
         if platform.system() == "Windows":
-            popen_kwargs["creationflags"] = CREATE_NEW_CONSOLE
+            popen_kwargs["creationflags"] = subprocess.CREATE_NEW_CONSOLE
         else:
             # "If shell is True, it is recommended to pass args as a
             # string rather than as a sequence."
@@ -232,7 +232,7 @@ def start_worker_process(queue_name):
         args=[sys.executable, "-m", "soonq.commands.start_worker", queue_name],
     )
     if platform.system() == "Windows":
-        popen_kwargs["creationflags"] = CREATE_NEW_CONSOLE
+        popen_kwargs["creationflags"] = subprocess.CREATE_NEW_CONSOLE
     else:
         # "If shell is True, it is recommended to pass args as a
         # string rather than as a sequence."
