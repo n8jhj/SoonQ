@@ -29,8 +29,8 @@ def get_task_class(name):
     # TODO: Remove this.  Importing here now to avoid circular import.
     import examples
 
-    istasksubclass = lambda x: inspect.isclass(x) and issubclass(x, sq.BaseTask)
-    task_classes = dict(inspect.getmembers(examples, istasksubclass))
+    is_task_subclass = lambda x: inspect.isclass(x) and issubclass(x, sq.BaseTask)
+    task_classes = dict(inspect.getmembers(examples, is_task_subclass))
     try:
         task_cls = task_classes[name]
     except KeyError:
@@ -38,6 +38,6 @@ def get_task_class(name):
     return task_cls
 
 
-def tabulate_data(data, headers=None):
+def tabulate_data(data, headers):
     """Tabulate data in a nice text table."""
     return tabulate(data, headers=headers, **TABULATE_FORMATTING)
