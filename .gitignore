@@ -1,5 +1,3 @@
-# IDE
-.vscode/
 # Python run cache
 __pycache__/
 # Python venv
