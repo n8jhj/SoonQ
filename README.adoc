@@ -15,4 +15,5 @@ SoonQ/
   |_ poetry.lock
   |_ pyproject.toml
 cspell.json
+README.adoc
 ....
