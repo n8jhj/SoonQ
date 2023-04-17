@@ -6,9 +6,7 @@ A subprocess-based task queue library.
 
 This repository is organized as follows:
 
-[plantuml]
 ....
-@startuml
 SoonQ/
 |_ .vscode/
 |_ examples/
@@ -17,5 +15,4 @@ SoonQ/
   |_ poetry.lock
   |_ pyproject.toml
 cspell.json
-@enduml
 ....
