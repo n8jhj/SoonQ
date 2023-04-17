@@ -1,9 +1,0 @@
-# Python run cache
-__pycache__/
-# Python venv
-env/
-# Python packaging
-*.egg-info/
-dist/
-# Testing
-/.coverage
