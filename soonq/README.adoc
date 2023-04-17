@@ -1,3 +1,21 @@
 = SoonQ
 
 A subprocess-based task queue library.
+
+== Design
+
+This repository is organized as follows:
+
+[plantuml]
+....
+@startuml
+SoonQ/
+|_ .vscode/
+|_ examples/
+|_ soonq/
+  |_ src/
+  |_ poetry.lock
+  |_ pyproject.toml
+cspell.json
+@enduml
+....

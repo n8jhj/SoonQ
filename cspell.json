@@ -1,0 +1,11 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "words": [
+    "enduml",
+    "plantuml",
+    "pyproject",
+    "soonq",
+    "startuml"
+  ]
+}
